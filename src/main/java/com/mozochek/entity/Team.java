@@ -4,7 +4,6 @@ import javax.persistence.*;
 import java.util.Objects;
 import java.util.Set;
 
-//TODO Класс почти готов, сделать заключительную проверку
 @Entity
 @Table(name = "teams", schema = "webdb")
 public class Team {
@@ -27,12 +26,11 @@ public class Team {
     @OneToMany(targetEntity = MatchParticipant.class, mappedBy = "team")
     private Set<MatchParticipant> matchParticipants;
 
-    private Team() {
+    public Team() {
 
     }
 
-    public Team(Integer id, String name, Tournament tournament) {
-        this.id = id;
+    public Team(String name, Tournament tournament) {
         this.name = name;
         this.tournament = tournament;
     }
@@ -41,12 +39,24 @@ public class Team {
         return id;
     }
 
+    public void setId(Integer id) {
+        this.id = id;
+    }
+
     public String getName() {
         return name;
     }
 
+    public void setName(String name) {
+        this.name = name;
+    }
+
     public Tournament getTournament() {
         return tournament;
+    }
+
+    public void setTournament(Tournament tournament) {
+        this.tournament = tournament;
     }
 
     public Set<TournamentParticipant> getTournamentParticipants() {
@@ -71,8 +81,6 @@ public class Team {
                 "id=" + id +
                 ", name='" + name + '\'' +
                 ", tournament=" + tournament +
-                ", tournamentParticipants=" + tournamentParticipants +
-                ", matchParticipants=" + matchParticipants +
                 '}';
     }
 
@@ -81,15 +89,13 @@ public class Team {
         if (this == o) return true;
         if (!(o instanceof Team)) return false;
         Team team = (Team) o;
-        return id.equals(team.id) &&
-                name.equals(team.name) &&
-                tournament.equals(team.tournament) &&
-                Objects.equals(tournamentParticipants, team.tournamentParticipants) &&
-                Objects.equals(matchParticipants, team.matchParticipants);
+        return Objects.equals(id, team.id) &&
+                Objects.equals(name, team.name) &&
+                Objects.equals(tournament, team.tournament);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, name, tournament, tournamentParticipants, matchParticipants);
+        return Objects.hash(id, name, tournament);
     }
 }

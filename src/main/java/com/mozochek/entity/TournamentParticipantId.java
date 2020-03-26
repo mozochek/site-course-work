@@ -5,7 +5,6 @@ import javax.persistence.Embeddable;
 import java.io.Serializable;
 import java.util.Objects;
 
-//TODO Класс готов!
 @Embeddable
 public class TournamentParticipantId implements Serializable {
 
@@ -15,7 +14,7 @@ public class TournamentParticipantId implements Serializable {
     @Column(name = "team_id", nullable = false)
     private Integer teamId;
 
-    private TournamentParticipantId() {
+    public TournamentParticipantId() {
 
     }
 
@@ -28,8 +27,16 @@ public class TournamentParticipantId implements Serializable {
         return humanId;
     }
 
+    public void setHumanId(Integer humanId) {
+        this.humanId = humanId;
+    }
+
     public Integer getTeamId() {
         return teamId;
+    }
+
+    public void setTeamId(Integer teamId) {
+        this.teamId = teamId;
     }
 
     @Override
@@ -45,8 +52,8 @@ public class TournamentParticipantId implements Serializable {
         if (this == o) return true;
         if (!(o instanceof TournamentParticipantId)) return false;
         TournamentParticipantId that = (TournamentParticipantId) o;
-        return humanId.equals(that.humanId) &&
-                teamId.equals(that.teamId);
+        return Objects.equals(humanId, that.humanId) &&
+                Objects.equals(teamId, that.teamId);
     }
 
     @Override

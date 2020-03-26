@@ -4,7 +4,6 @@ import javax.persistence.*;
 import java.util.Objects;
 import java.util.Set;
 
-//TODO Класс почти готов, решить вопрос по поводу Enum и затем сделать заключительную проверку
 @Entity
 @Table(name = "tournaments", schema = "webdb")
 public class Tournament {
@@ -17,9 +16,8 @@ public class Tournament {
     @Column(nullable = false, length = 100)
     private String name;
 
-    //TODO 1. Подумать по поводу Enum
     @Column(nullable = false, length = 50)
-    private String type;
+    private String format;
 
     @Column(nullable = false, length = 30)
     private String city;
@@ -37,36 +35,54 @@ public class Tournament {
     @OneToMany(targetEntity = Match.class, mappedBy = "tournament")
     private Set<Match> matches;
 
-    private Tournament() {
+    public Tournament() {
 
     }
 
-    public Tournament(Integer id, String name, String type, String city, SportDiscipline sportDiscipline) {
-        this.id = id;
+    public Tournament(String name, String format, String city) {
         this.name = name;
-        this.type = type;
+        this.format = format;
         this.city = city;
-        this.sportDiscipline = sportDiscipline;
     }
 
     public Integer getId() {
         return id;
     }
 
+    public void setId(Integer id) {
+        this.id = id;
+    }
+
     public String getName() {
         return name;
     }
 
-    public String getType() {
-        return type;
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getFormat() {
+        return format;
+    }
+
+    public void setFormat(String format) {
+        this.format = format;
     }
 
     public String getCity() {
         return city;
     }
 
+    public void setCity(String city) {
+        this.city = city;
+    }
+
     public SportDiscipline getSportDiscipline() {
         return sportDiscipline;
+    }
+
+    public void setSportDiscipline(SportDiscipline sportDiscipline) {
+        this.sportDiscipline = sportDiscipline;
     }
 
     public Set<TournamentJudge> getJudges() {
@@ -98,12 +114,9 @@ public class Tournament {
         return "Tournament{" +
                 "id=" + id +
                 ", name='" + name + '\'' +
-                ", type='" + type + '\'' +
+                ", format='" + format + '\'' +
                 ", city='" + city + '\'' +
                 ", sportDiscipline=" + sportDiscipline +
-                ", judges=" + judges +
-                ", teams=" + teams +
-                ", matches=" + matches +
                 '}';
     }
 
@@ -112,18 +125,15 @@ public class Tournament {
         if (this == o) return true;
         if (!(o instanceof Tournament)) return false;
         Tournament that = (Tournament) o;
-        return id.equals(that.id) &&
-                name.equals(that.name) &&
-                type.equals(that.type) &&
-                city.equals(that.city) &&
-                sportDiscipline.equals(that.sportDiscipline) &&
-                Objects.equals(judges, that.judges) &&
-                Objects.equals(teams, that.teams) &&
-                Objects.equals(matches, that.matches);
+        return Objects.equals(id, that.id) &&
+                Objects.equals(name, that.name) &&
+                Objects.equals(format, that.format) &&
+                Objects.equals(city, that.city) &&
+                Objects.equals(sportDiscipline, that.sportDiscipline);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, name, type, city, sportDiscipline, judges, teams, matches);
+        return Objects.hash(id, name, format, city, sportDiscipline);
     }
 }

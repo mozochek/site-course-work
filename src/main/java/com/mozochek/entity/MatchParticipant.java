@@ -3,7 +3,6 @@ package com.mozochek.entity;
 import javax.persistence.*;
 import java.util.Objects;
 
-//TODO Класс готов!
 @Entity
 @Table(name = "match_participants", schema = "webdb")
 public class MatchParticipant {
@@ -19,26 +18,37 @@ public class MatchParticipant {
     @MapsId("teamId")
     private Team team;
 
-    private MatchParticipant() {
+    public MatchParticipant() {
 
     }
 
     public MatchParticipant(Match match, Team team) {
         this.match = match;
         this.team = team;
-        this.id = new MatchParticipantId(match.getId(), team.getId());
     }
 
     public MatchParticipantId getId() {
         return id;
     }
 
+    public void setId(MatchParticipantId id) {
+        this.id = id;
+    }
+
     public Match getMatch() {
         return match;
     }
 
+    public void setMatch(Match match) {
+        this.match = match;
+    }
+
     public Team getTeam() {
         return team;
+    }
+
+    public void setTeam(Team team) {
+        this.team = team;
     }
 
     @Override
@@ -55,9 +65,9 @@ public class MatchParticipant {
         if (this == o) return true;
         if (!(o instanceof MatchParticipant)) return false;
         MatchParticipant that = (MatchParticipant) o;
-        return id.equals(that.id) &&
-                match.equals(that.match) &&
-                team.equals(that.team);
+        return Objects.equals(id, that.id) &&
+                Objects.equals(match, that.match) &&
+                Objects.equals(team, that.team);
     }
 
     @Override

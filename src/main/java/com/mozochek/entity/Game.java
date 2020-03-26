@@ -3,7 +3,6 @@ package com.mozochek.entity;
 import javax.persistence.*;
 import java.util.Objects;
 
-//TODO Класс почти готов, сделать последнюю проверку
 @Entity
 @Table(name = "games", schema = "webdb")
 public class Game {
@@ -20,12 +19,11 @@ public class Game {
     @JoinColumn(name = "match_id", nullable = false)
     private Match match;
 
-    private Game() {
+    public Game() {
 
     }
 
-    public Game(Integer id, String score, Match match) {
-        this.id = id;
+    public Game(String score, Match match) {
         this.score = score;
         this.match = match;
     }
@@ -34,12 +32,24 @@ public class Game {
         return id;
     }
 
+    public void setId(Integer id) {
+        this.id = id;
+    }
+
     public String getScore() {
         return score;
     }
 
+    public void setScore(String score) {
+        this.score = score;
+    }
+
     public Match getMatch() {
         return match;
+    }
+
+    public void setMatch(Match match) {
+        this.match = match;
     }
 
     @Override
@@ -56,9 +66,9 @@ public class Game {
         if (this == o) return true;
         if (!(o instanceof Game)) return false;
         Game game = (Game) o;
-        return id.equals(game.id) &&
-                score.equals(game.score) &&
-                match.equals(game.match);
+        return Objects.equals(id, game.id) &&
+                Objects.equals(score, game.score) &&
+                Objects.equals(match, game.match);
     }
 
     @Override

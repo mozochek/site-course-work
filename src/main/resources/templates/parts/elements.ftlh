@@ -12,9 +12,9 @@
                 <li class="nav-item dropdown">
                     <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Админ-панель</a>
                     <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+                        <a class="dropdown-item" href="/sport_kind/add">Добавить вид спорта</a>
+                        <a class="dropdown-item" href="/sport_discipline/add">Добавить спортинвую дисциплину</a>
                         <a class="dropdown-item" href="/tournament/add">Добавить турнир</a>
-                        <a class="dropdown-item" href="#">Тест2</a>
-                        <a class="dropdown-item" href="#">Тест3</a>
                     </div>
                 </li>
             </ul>

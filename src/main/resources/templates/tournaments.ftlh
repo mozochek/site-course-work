@@ -9,25 +9,19 @@
         <caption>Список турниров</caption>
           <thead>
             <tr>
-              <th scope="col">Название турнира</th>
-              <th scope="col">Место проведения</th>
-              <th scope="col">Сроки проведения</th>
-              <th scope="col">Возрастная группа</th>
-              <th scope="col">Пол игроков</th>
-              <th scope="col">Категория</th>
-              <th scope="col">Класс</th>
+                <th scope="col">Название турнира</th>
+                <th scope="col">Дисциплина</th>
+                <th scope="col">Место проведения</th>
+                <th scope="col">Формат</th>
             </tr>
           </thead>
           <tbody>
             <#list tournaments as t>
                 <tr>
                   <th scope="row"><a href="/tournament/${t.id}">${t.name}</a></th>
-                  <td>${t.place}</td>
-                  <td>${t.date}</td>
-                  <td>${t.age}</td>
-                  <td>${t.sex}</td>
-                  <td>${t.category}</td>
-                  <td>${t.type}</td>
+                  <td>${t.sportDiscipline.name}</td>
+                  <td>${t.city}</td>
+                  <td>${t.format}</td>
                 </tr>
             </#list>
           </tbody>

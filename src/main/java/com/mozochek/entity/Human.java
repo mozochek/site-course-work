@@ -5,7 +5,6 @@ import java.sql.Date;
 import java.util.Objects;
 import java.util.Set;
 
-//TODO Класс почти готов, сделать заключительную проверку
 @Entity
 @Table(name = "humans", schema = "webdb")
 public class Human {
@@ -36,12 +35,11 @@ public class Human {
     @OneToMany(targetEntity = TournamentParticipant.class, mappedBy = "human")
     private Set<TournamentParticipant> participants;
 
-    private Human() {
+    public Human() {
 
     }
 
-    public Human(Integer id, String name, String surname, String patronymic, String city, Date birthDate) {
-        this.id = id;
+    public Human(String name, String surname, String patronymic, String city, Date birthDate) {
         this.name = name;
         this.surname = surname;
         this.patronymic = patronymic;
@@ -53,24 +51,48 @@ public class Human {
         return id;
     }
 
+    public void setId(Integer id) {
+        this.id = id;
+    }
+
     public String getName() {
         return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 
     public String getSurname() {
         return surname;
     }
 
+    public void setSurname(String surname) {
+        this.surname = surname;
+    }
+
     public String getPatronymic() {
         return patronymic;
+    }
+
+    public void setPatronymic(String patronymic) {
+        this.patronymic = patronymic;
     }
 
     public String getCity() {
         return city;
     }
 
+    public void setCity(String city) {
+        this.city = city;
+    }
+
     public Date getBirthDate() {
         return birthDate;
+    }
+
+    public void setBirthDate(Date birthDate) {
+        this.birthDate = birthDate;
     }
 
     public Set<TournamentJudge> getJudges() {
@@ -98,8 +120,6 @@ public class Human {
                 ", patronymic='" + patronymic + '\'' +
                 ", city='" + city + '\'' +
                 ", birthDate=" + birthDate +
-                ", judges=" + judges +
-                ", participants=" + participants +
                 '}';
     }
 
@@ -108,18 +128,16 @@ public class Human {
         if (this == o) return true;
         if (!(o instanceof Human)) return false;
         Human human = (Human) o;
-        return id.equals(human.id) &&
-                name.equals(human.name) &&
-                surname.equals(human.surname) &&
-                patronymic.equals(human.patronymic) &&
-                city.equals(human.city) &&
-                birthDate.equals(human.birthDate) &&
-                Objects.equals(judges, human.judges) &&
-                Objects.equals(participants, human.participants);
+        return Objects.equals(id, human.id) &&
+                Objects.equals(name, human.name) &&
+                Objects.equals(surname, human.surname) &&
+                Objects.equals(patronymic, human.patronymic) &&
+                Objects.equals(city, human.city) &&
+                Objects.equals(birthDate, human.birthDate);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, name, surname, patronymic, city, birthDate, judges, participants);
+        return Objects.hash(id, name, surname, patronymic, city, birthDate);
     }
 }

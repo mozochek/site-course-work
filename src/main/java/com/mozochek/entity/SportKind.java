@@ -4,14 +4,12 @@ import javax.persistence.*;
 import java.util.Objects;
 import java.util.Set;
 
-//TODO Класс почти готов, решить вопрос по поводу ID и затем сделать заключительную проверку
 @Entity
 @Table(name = "sport_kinds", schema = "webdb")
 public class SportKind {
 
-    //TODO 1. Подумать на счет ID'шника, мб сделать его строкой и записывать в него код из реестра
     @Id
-    @GeneratedValue(strategy= GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(unique = true, nullable = false, updatable = false)
     private Integer id;
 
@@ -21,12 +19,10 @@ public class SportKind {
     @OneToMany(targetEntity = SportDiscipline.class, mappedBy = "sportKind")
     private Set<SportDiscipline> sportDisciplines;
 
-    private SportKind() {
-
+    public SportKind() {
     }
 
-    public SportKind(Integer id, String name) {
-        this.id = id;
+    public SportKind(String name) {
         this.name = name;
     }
 
@@ -34,8 +30,16 @@ public class SportKind {
         return id;
     }
 
+    public void setId(Integer id) {
+        this.id = id;
+    }
+
     public String getName() {
         return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 
     public Set<SportDiscipline> getSportDisciplines() {
@@ -51,7 +55,6 @@ public class SportKind {
         return "SportKind{" +
                 "id=" + id +
                 ", name='" + name + '\'' +
-                ", sportDisciplines=" + sportDisciplines +
                 '}';
     }
 
@@ -60,13 +63,12 @@ public class SportKind {
         if (this == o) return true;
         if (!(o instanceof SportKind)) return false;
         SportKind sportKind = (SportKind) o;
-        return id.equals(sportKind.id) &&
-                name.equals(sportKind.name) &&
-                Objects.equals(sportDisciplines, sportKind.sportDisciplines);
+        return Objects.equals(id, sportKind.id) &&
+                Objects.equals(name, sportKind.name);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, name, sportDisciplines);
+        return Objects.hash(id, name);
     }
 }

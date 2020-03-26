@@ -4,12 +4,10 @@ import javax.persistence.*;
 import java.util.Objects;
 import java.util.Set;
 
-//TODO Класс почти готов, решить вопрос по поводу ID и затем сделать заключительную проверку
 @Entity
 @Table(name = "sport_disciplines", schema = "webdb")
 public class SportDiscipline {
 
-    //TODO 1. Подумать на счет ID'шника, мб сделать его строкой и записывать в него код из реестра
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(unique = true, nullable = false, updatable = false)
@@ -25,12 +23,11 @@ public class SportDiscipline {
     @OneToMany(targetEntity = Tournament.class, mappedBy = "sportDiscipline")
     private Set<Tournament> tournaments;
 
-    private SportDiscipline() {
+    public SportDiscipline() {
 
     }
 
-    public SportDiscipline(Integer id, String name, SportKind sportKind) {
-        this.id = id;
+    public SportDiscipline(String name, SportKind sportKind) {
         this.name = name;
         this.sportKind = sportKind;
     }
@@ -39,12 +36,24 @@ public class SportDiscipline {
         return id;
     }
 
+    public void setId(Integer id) {
+        this.id = id;
+    }
+
     public String getName() {
         return name;
     }
 
+    public void setName(String name) {
+        this.name = name;
+    }
+
     public SportKind getSportKind() {
         return sportKind;
+    }
+
+    public void setSportKind(SportKind sportKind) {
+        this.sportKind = sportKind;
     }
 
     public Set<Tournament> getTournaments() {
@@ -61,7 +70,6 @@ public class SportDiscipline {
                 "id=" + id +
                 ", name='" + name + '\'' +
                 ", sportKind=" + sportKind +
-                ", tournaments=" + tournaments +
                 '}';
     }
 
@@ -70,14 +78,13 @@ public class SportDiscipline {
         if (this == o) return true;
         if (!(o instanceof SportDiscipline)) return false;
         SportDiscipline that = (SportDiscipline) o;
-        return id.equals(that.id) &&
-                name.equals(that.name) &&
-                sportKind.equals(that.sportKind) &&
-                Objects.equals(tournaments, that.tournaments);
+        return Objects.equals(id, that.id) &&
+                Objects.equals(name, that.name) &&
+                Objects.equals(sportKind, that.sportKind);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, name, sportKind, tournaments);
+        return Objects.hash(id, name, sportKind);
     }
 }

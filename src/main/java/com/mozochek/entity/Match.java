@@ -4,7 +4,6 @@ import javax.persistence.*;
 import java.util.Objects;
 import java.util.Set;
 
-//TODO Класс почти готов, решить вопрос по поводу хранения счета и затем сделать заключительную проверку
 @Entity
 @Table(name = "matches", schema = "webdb")
 public class Match {
@@ -27,12 +26,11 @@ public class Match {
     @OneToMany(targetEntity = MatchParticipant.class, mappedBy = "match")
     private Set<MatchParticipant> matchParticipants;
 
-    private Match() {
+    public Match() {
 
     }
 
-    public Match(Integer id, String score, Tournament tournament) {
-        this.id = id;
+    public Match(String score, Tournament tournament) {
         this.score = score;
         this.tournament = tournament;
     }
@@ -41,12 +39,24 @@ public class Match {
         return id;
     }
 
+    public void setId(Integer id) {
+        this.id = id;
+    }
+
     public String getScore() {
         return score;
     }
 
+    public void setScore(String score) {
+        this.score = score;
+    }
+
     public Tournament getTournament() {
         return tournament;
+    }
+
+    public void setTournament(Tournament tournament) {
+        this.tournament = tournament;
     }
 
     public Set<Game> getGames() {
@@ -71,8 +81,6 @@ public class Match {
                 "id=" + id +
                 ", score='" + score + '\'' +
                 ", tournament=" + tournament +
-                ", games=" + games +
-                ", matchParticipants=" + matchParticipants +
                 '}';
     }
 
@@ -81,15 +89,13 @@ public class Match {
         if (this == o) return true;
         if (!(o instanceof Match)) return false;
         Match match = (Match) o;
-        return id.equals(match.id) &&
-                score.equals(match.score) &&
-                tournament.equals(match.tournament) &&
-                Objects.equals(games, match.games) &&
-                Objects.equals(matchParticipants, match.matchParticipants);
+        return Objects.equals(id, match.id) &&
+                Objects.equals(score, match.score) &&
+                Objects.equals(tournament, match.tournament);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, score, tournament, games, matchParticipants);
+        return Objects.hash(id, score, tournament);
     }
 }
