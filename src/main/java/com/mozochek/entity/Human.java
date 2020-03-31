@@ -3,7 +3,8 @@ package com.mozochek.entity;
 import javax.persistence.*;
 import java.sql.Date;
 import java.util.Objects;
-import java.util.Set;
+
+import static com.mozochek.utils.LengthConstants.*;
 
 @Entity
 @Table(name = "humans", schema = "webdb")
@@ -11,40 +12,25 @@ public class Human {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(unique = true, nullable = false, updatable = false)
     private Integer id;
 
-    @Column(nullable = false, length = 35)
+    @Column(nullable = false, length = HUMAN_NAME_LENGTH)
     private String name;
 
-    @Column(nullable = false, length = 35)
+    @Column(nullable = false, length = HUMAN_SURNAME_LENGTH)
     private String surname;
 
-    @Column(nullable = false, length = 35)
+    @Column(length = HUMAN_PATRONYMIC_LENGTH)
     private String patronymic;
 
-    @Column(nullable = false, length = 30)
+    @Column(length = CITY_LENGTH)
     private String city;
 
     @Column(name = "birth_date")
     private Date birthDate;
 
-    @OneToMany(targetEntity = TournamentJudge.class, mappedBy = "human")
-    private Set<TournamentJudge> judges;
-
-    @OneToMany(targetEntity = TournamentParticipant.class, mappedBy = "human")
-    private Set<TournamentParticipant> participants;
-
     public Human() {
 
-    }
-
-    public Human(String name, String surname, String patronymic, String city, Date birthDate) {
-        this.name = name;
-        this.surname = surname;
-        this.patronymic = patronymic;
-        this.city = city;
-        this.birthDate = birthDate;
     }
 
     public Integer getId() {
@@ -93,22 +79,6 @@ public class Human {
 
     public void setBirthDate(Date birthDate) {
         this.birthDate = birthDate;
-    }
-
-    public Set<TournamentJudge> getJudges() {
-        return judges;
-    }
-
-    public void setJudges(Set<TournamentJudge> judges) {
-        this.judges = judges;
-    }
-
-    public Set<TournamentParticipant> getParticipants() {
-        return participants;
-    }
-
-    public void setParticipants(Set<TournamentParticipant> participants) {
-        this.participants = participants;
     }
 
     @Override

@@ -1,44 +1,49 @@
 package com.mozochek.controller;
 
-import com.mozochek.entity.SportKind;
-import com.mozochek.repository.SportKindRepository;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.ApplicationContext;
-import org.springframework.context.annotation.AnnotationConfigApplicationContext;
-import org.springframework.http.HttpStatus;
+import com.mozochek.service.SportKindService;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.util.StringUtils;
-import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import javax.servlet.http.HttpServletRequest;
+import static com.mozochek.utils.LengthConstants.CODE_LENGTH;
+import static com.mozochek.utils.LengthConstants.SPORT_KIND_NAME_LENGTH;
 
 @Controller
 @RequestMapping("/sport_kind")
 public class SportKindController {
 
-    @Autowired
-    private SportKindRepository sportKindRepository;
+    private SportKindService sportKindService;
+
+    public SportKindController(SportKindService sportKindService) {
+        this.sportKindService = sportKindService;
+    }
 
     @GetMapping("/add")
-    public String sportKindAdd() {
+    public String add(Model model) {
+        addFieldsLengthConstants(model);
         return "sport_kind_add";
     }
 
     @PostMapping("/add")
-    public String add(@RequestParam(name = "inputSportKindName") String sportKindName, Model model) {
-        if(StringUtils.isEmpty(sportKindName)) {
-            System.out.println("empty");
-            model.addAttribute("textError", "Введите название вида спорта!");
+    public String save(@RequestParam(name = "sportKindName") String sportKindName,
+                      @RequestParam(name = "sportKindCode") String sportKindCode,
+                      Model model) {
+        addFieldsLengthConstants(model);
+        boolean isAdded = sportKindService.addSportKind(sportKindName, sportKindCode);
+        if (isAdded) {
+            model.addAttribute("dataIsValid", "Успешно добавлено!");
         } else {
-            SportKind sportKind = new SportKind(sportKindName);
-            sportKindRepository.save(sportKind);
-            model.addAttribute("textAccept", "Успешно добалено!");
+            model.addAllAttributes(sportKindService.getErrors());
+            model.addAllAttributes(sportKindService.getPreviousValues());
         }
         return "sport_kind_add";
+    }
+
+    private void addFieldsLengthConstants(Model model) {
+        model.addAttribute("sportKindNameLength", SPORT_KIND_NAME_LENGTH);
+        model.addAttribute("codeLength", CODE_LENGTH);
     }
 }

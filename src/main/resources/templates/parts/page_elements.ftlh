@@ -14,7 +14,8 @@
                     <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
                         <a class="dropdown-item" href="/sport_kind/add">Добавить вид спорта</a>
                         <a class="dropdown-item" href="/sport_discipline/add">Добавить спортинвую дисциплину</a>
-                        <a class="dropdown-item" href="/tournament/add">Добавить турнир</a>
+                        <a class="dropdown-item" href="/tournament/registration">Зарегестрировать турнир</a>
+                        <a class="dropdown-item" href="/human/add">Добавить человека</a>
                     </div>
                 </li>
             </ul>

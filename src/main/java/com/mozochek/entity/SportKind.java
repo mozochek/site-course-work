@@ -2,7 +2,9 @@ package com.mozochek.entity;
 
 import javax.persistence.*;
 import java.util.Objects;
-import java.util.Set;
+
+import static com.mozochek.utils.LengthConstants.CODE_LENGTH;
+import static com.mozochek.utils.LengthConstants.SPORT_KIND_NAME_LENGTH;
 
 @Entity
 @Table(name = "sport_kinds", schema = "webdb")
@@ -10,20 +12,16 @@ public class SportKind {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(unique = true, nullable = false, updatable = false)
     private Integer id;
 
-    @Column(nullable = false, length = 30)
+    @Column(length = CODE_LENGTH)
+    private String code;
+
+    @Column(length = SPORT_KIND_NAME_LENGTH)
     private String name;
 
-    @OneToMany(targetEntity = SportDiscipline.class, mappedBy = "sportKind")
-    private Set<SportDiscipline> sportDisciplines;
-
     public SportKind() {
-    }
 
-    public SportKind(String name) {
-        this.name = name;
     }
 
     public Integer getId() {
@@ -34,6 +32,14 @@ public class SportKind {
         this.id = id;
     }
 
+    public String getCode() {
+        return code;
+    }
+
+    public void setCode(String code) {
+        this.code = code;
+    }
+
     public String getName() {
         return name;
     }
@@ -42,18 +48,11 @@ public class SportKind {
         this.name = name;
     }
 
-    public Set<SportDiscipline> getSportDisciplines() {
-        return sportDisciplines;
-    }
-
-    public void setSportDisciplines(Set<SportDiscipline> sportDisciplines) {
-        this.sportDisciplines = sportDisciplines;
-    }
-
     @Override
     public String toString() {
         return "SportKind{" +
                 "id=" + id +
+                ", code='" + code + '\'' +
                 ", name='" + name + '\'' +
                 '}';
     }
@@ -64,11 +63,12 @@ public class SportKind {
         if (!(o instanceof SportKind)) return false;
         SportKind sportKind = (SportKind) o;
         return Objects.equals(id, sportKind.id) &&
+                Objects.equals(code, sportKind.code) &&
                 Objects.equals(name, sportKind.name);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, name);
+        return Objects.hash(id, code, name);
     }
 }

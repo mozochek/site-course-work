@@ -9,11 +9,17 @@ public class Game {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "tournament_id", nullable = false, insertable = false, updatable = false)
     private Integer id;
 
-    @Column(length = 10)
-    private String score;
+    @Column(name = "winner_score")
+    private Short winnerScore;
+
+    @Column(name = "looser_score")
+    private Short looserScore;
+
+    @ManyToOne(targetEntity = Team.class)
+    @JoinColumn(name = "winner_team_id")
+    private Team winnerTeam;
 
     @ManyToOne(targetEntity = Match.class)
     @JoinColumn(name = "match_id", nullable = false)
@@ -21,11 +27,6 @@ public class Game {
 
     public Game() {
 
-    }
-
-    public Game(String score, Match match) {
-        this.score = score;
-        this.match = match;
     }
 
     public Integer getId() {
@@ -36,12 +37,28 @@ public class Game {
         this.id = id;
     }
 
-    public String getScore() {
-        return score;
+    public Short getWinnerScore() {
+        return winnerScore;
     }
 
-    public void setScore(String score) {
-        this.score = score;
+    public void setWinnerScore(Short winnerScore) {
+        this.winnerScore = winnerScore;
+    }
+
+    public Short getLooserScore() {
+        return looserScore;
+    }
+
+    public void setLooserScore(Short looserScore) {
+        this.looserScore = looserScore;
+    }
+
+    public Team getWinnerTeam() {
+        return winnerTeam;
+    }
+
+    public void setWinnerTeam(Team winnerTeam) {
+        this.winnerTeam = winnerTeam;
     }
 
     public Match getMatch() {
@@ -56,7 +73,6 @@ public class Game {
     public String toString() {
         return "Game{" +
                 "id=" + id +
-                ", score='" + score + '\'' +
                 ", match=" + match +
                 '}';
     }
@@ -67,12 +83,11 @@ public class Game {
         if (!(o instanceof Game)) return false;
         Game game = (Game) o;
         return Objects.equals(id, game.id) &&
-                Objects.equals(score, game.score) &&
                 Objects.equals(match, game.match);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, score, match);
+        return Objects.hash(id, match);
     }
 }

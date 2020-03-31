@@ -6,22 +6,39 @@
     </div>
     <form action="/sport_kind/add" method="post">
         <div class="col-lg-5">
-            <div class="form-group mt-lg-3">
-                <label for="inputTournamentName">Название вида спорта</label>
-                <input type="text" class="form-control<#if textError??> is-invalid</#if>" id="inputSportKindName" name="inputSportKindName">
-                <#if textError??>
-                    <div class="invalid-feedback">
-                        ${textError}
+            <div class="form-group">
+                <label for="sportKindName">Название вида спорта*</label>
+                <input type="text" maxlength="${sportKindNameLength!"50"}" <#if prevName??>value="${prevName}"</#if> class="form-control<#if nameError??> is-invalid</#if>" id="sportKindName" name="sportKindName" required>
+                <#if nameError??>
+                    <div class="invalid-feedback" for"sportKindName">
+                        ${nameError}
+                    </div>
+                </#if>
+            </div>
+            <div class="form-group">
+                <label for="sportKindCode">Код вида спорта*</label>
+                <input type="text" maxlength="${codeLength!"11"}" <#if prevCode??>value="${prevCode}"</#if> class="form-control<#if codeError??> is-invalid</#if>" id="sportKindCode" name="sportKindCode" aria-describedby="codeHelp" required>
+                <small id="codeHelp" class="form-text text-muted">Код спортивной дисциплины из реестра, например: 0120002611Я</small>
+                <#if codeError??>
+                    <div class="invalid-feedback" for="sportKindCode">
+                        ${codeError}
                     </div>
                 </#if>
             </div>
 
-            <button type="submit" class="btn btn-outline-success">Добавить</button>
-            <#if textAccept??>
-                <div class="">
-                    ${textAccept}
-                </div>
-            </#if>
+            <div class="form-group">
+                <button type="submit" class="btn btn-outline-success">Добавить</button>
+                <input class="form-control<#if objectExist??> is-invalid <#elseif dataIsValid??> is-valid</#if>" type="hidden" id="submitFeedback" name="submitFeedback">
+                <#if objectExist??>
+                    <div class="invalid-feedback" for="submitFeedback">
+                        ${objectExist}
+                    </div>
+                <#elseif dataIsValid??>
+                    <div class="valid-feedback" for="submitFeedback">
+                        ${dataIsValid}
+                    </div>
+                </#if>
+            </div>
         </div>
     </form>
 </@html.page>

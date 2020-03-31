@@ -1,49 +1,46 @@
 package com.mozochek.entity;
 
-import javax.persistence.Column;
-import javax.persistence.Embeddable;
+import javax.persistence.*;
 import java.io.Serializable;
 import java.util.Objects;
 
 @Embeddable
 public class TournamentJudgeId implements Serializable {
 
-    @Column(name = "human_id", nullable = false)
-    private Integer humanId;
+    @ManyToOne(targetEntity = Human.class)
+    @OneToOne(targetEntity = Tournament.class, mappedBy = "mainJudge")
+    @JoinColumn(name = "human_id", nullable = false)
+    private Human human;
 
-    @Column(name = "tournament_id", nullable = false)
-    private Integer tournamentId;
+    @ManyToOne(targetEntity = Tournament.class)
+    @JoinColumn(name = "tournament_id", nullable = false)
+    private Tournament tournament;
 
     public TournamentJudgeId() {
 
     }
 
-    public TournamentJudgeId(Integer humanId, Integer tournamentId) {
-        this.humanId = humanId;
-        this.tournamentId = tournamentId;
+    public Human getHuman() {
+        return human;
     }
 
-    public Integer getHumanId() {
-        return humanId;
+    public void setHuman(Human human) {
+        this.human = human;
     }
 
-    public void setHumanId(Integer humanId) {
-        this.humanId = humanId;
+    public Tournament getTournament() {
+        return tournament;
     }
 
-    public Integer getTournamentId() {
-        return tournamentId;
-    }
-
-    public void setTournamentId(Integer tournamentId) {
-        this.tournamentId = tournamentId;
+    public void setTournament(Tournament tournament) {
+        this.tournament = tournament;
     }
 
     @Override
     public String toString() {
         return "TournamentJudgeId{" +
-                "humanId=" + humanId +
-                ", tournamentId=" + tournamentId +
+                "human=" + human +
+                ", tournament=" + tournament +
                 '}';
     }
 
@@ -52,12 +49,12 @@ public class TournamentJudgeId implements Serializable {
         if (this == o) return true;
         if (!(o instanceof TournamentJudgeId)) return false;
         TournamentJudgeId that = (TournamentJudgeId) o;
-        return Objects.equals(humanId, that.humanId) &&
-                Objects.equals(tournamentId, that.tournamentId);
+        return Objects.equals(human, that.human) &&
+                Objects.equals(tournament, that.tournament);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(humanId, tournamentId);
+        return Objects.hash(human, tournament);
     }
 }

@@ -1,49 +1,47 @@
 package com.mozochek.entity;
 
-import javax.persistence.Column;
 import javax.persistence.Embeddable;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import java.io.Serializable;
 import java.util.Objects;
 
 @Embeddable
 public class MatchParticipantId implements Serializable {
 
-    @Column(name = "match_id", nullable = false)
-    private Integer matchId;
+    @ManyToOne(targetEntity = Team.class)
+    @JoinColumn(name = "team_id", nullable = false)
+    private Team team;
 
-    @Column(name = "team_id", nullable = false)
-    private Integer teamId;
+    @ManyToOne(targetEntity = Match.class)
+    @JoinColumn(name = "match_id", nullable = false)
+    private Match match;
 
     public MatchParticipantId() {
 
     }
 
-    public MatchParticipantId(Integer matchId, Integer teamId) {
-        this.matchId = matchId;
-        this.teamId = teamId;
+    public Team getTeam() {
+        return team;
     }
 
-    public Integer getMatchId() {
-        return matchId;
+    public void setTeam(Team team) {
+        this.team = team;
     }
 
-    public void setMatchId(Integer matchId) {
-        this.matchId = matchId;
+    public Match getMatch() {
+        return match;
     }
 
-    public Integer getTeamId() {
-        return teamId;
-    }
-
-    public void setTeamId(Integer teamId) {
-        this.teamId = teamId;
+    public void setMatch(Match match) {
+        this.match = match;
     }
 
     @Override
     public String toString() {
         return "MatchParticipantId{" +
-                "matchId=" + matchId +
-                ", teamId=" + teamId +
+                "team=" + team +
+                ", match=" + match +
                 '}';
     }
 
@@ -52,12 +50,12 @@ public class MatchParticipantId implements Serializable {
         if (this == o) return true;
         if (!(o instanceof MatchParticipantId)) return false;
         MatchParticipantId that = (MatchParticipantId) o;
-        return Objects.equals(matchId, that.matchId) &&
-                Objects.equals(teamId, that.teamId);
+        return Objects.equals(team, that.team) &&
+                Objects.equals(match, that.match);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(matchId, teamId);
+        return Objects.hash(team, match);
     }
 }

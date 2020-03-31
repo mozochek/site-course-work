@@ -1,8 +1,10 @@
 package com.mozochek.entity;
 
 import javax.persistence.*;
+import java.sql.Date;
 import java.util.Objects;
-import java.util.Set;
+
+import static com.mozochek.utils.LengthConstants.*;
 
 @Entity
 @Table(name = "tournaments", schema = "webdb")
@@ -10,39 +12,49 @@ public class Tournament {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(unique = true, nullable = false, updatable = false)
     private Integer id;
 
-    @Column(nullable = false, length = 100)
+    @Column(length = TOURNAMENT_NAME_LENGTH)
     private String name;
 
-    @Column(nullable = false, length = 50)
+    @Column(length = TOURNAMENT_FORMAT_LENGTH)
     private String format;
 
-    @Column(nullable = false, length = 30)
+    @Column(length = CITY_LENGTH)
     private String city;
+
+    @Column(name = "date_from")
+    private Date dateFrom;
+
+    @Column(name = "date_till")
+    private Date dateTill;
+
+    @Column(name = "age_group", length = TOURNAMENT_AGE_GROUP_LENGTH)
+    private String ageGroup;
+
+    @Column(length = TOURNAMENT_GENDER_LENGTH)
+    private String gender;
+
+    @Column(length = TOURNAMENT_CATEGORY_LENGTH)
+    private String category;
+
+    @Column(length = TOURNAMENT_CLASS_LENGTH)
+    private String tournamentClass;
 
     @ManyToOne(targetEntity = SportDiscipline.class)
     @JoinColumn(name = "sport_discipline_id", nullable = false)
     private SportDiscipline sportDiscipline;
 
-    @OneToMany(targetEntity = TournamentJudge.class, mappedBy = "tournament")
-    private Set<TournamentJudge> judges;
+    @OneToOne(targetEntity = Team.class)
+    @JoinColumn(name = "winner_team_id")
+    private Team winnerTeam;
 
-    @OneToMany(targetEntity = Team.class, mappedBy = "tournament")
-    private Set<Team> teams;
-
-    @OneToMany(targetEntity = Match.class, mappedBy = "tournament")
-    private Set<Match> matches;
+    @OneToOne(targetEntity = Human.class)
+    @JoinColumn(name = "main_judge_id")
+    private Human mainJudge;
 
     public Tournament() {
 
-    }
-
-    public Tournament(String name, String format, String city) {
-        this.name = name;
-        this.format = format;
-        this.city = city;
     }
 
     public Integer getId() {
@@ -77,6 +89,54 @@ public class Tournament {
         this.city = city;
     }
 
+    public Date getDateFrom() {
+        return dateFrom;
+    }
+
+    public void setDateFrom(Date dateFrom) {
+        this.dateFrom = dateFrom;
+    }
+
+    public Date getDateTill() {
+        return dateTill;
+    }
+
+    public void setDateTill(Date dateTill) {
+        this.dateTill = dateTill;
+    }
+
+    public String getAgeGroup() {
+        return ageGroup;
+    }
+
+    public void setAgeGroup(String ageGroup) {
+        this.ageGroup = ageGroup;
+    }
+
+    public String getGender() {
+        return gender;
+    }
+
+    public void setGender(String gender) {
+        this.gender = gender;
+    }
+
+    public String getCategory() {
+        return category;
+    }
+
+    public void setCategory(String category) {
+        this.category = category;
+    }
+
+    public String getTournamentClass() {
+        return tournamentClass;
+    }
+
+    public void setTournamentClass(String tournamentClass) {
+        this.tournamentClass = tournamentClass;
+    }
+
     public SportDiscipline getSportDiscipline() {
         return sportDiscipline;
     }
@@ -85,28 +145,20 @@ public class Tournament {
         this.sportDiscipline = sportDiscipline;
     }
 
-    public Set<TournamentJudge> getJudges() {
-        return judges;
+    public Team getWinnerTeam() {
+        return winnerTeam;
     }
 
-    public void setJudges(Set<TournamentJudge> judges) {
-        this.judges = judges;
+    public void setWinnerTeam(Team winnerTeam) {
+        this.winnerTeam = winnerTeam;
     }
 
-    public Set<Team> getTeams() {
-        return teams;
+    public Human getMainJudge() {
+        return mainJudge;
     }
 
-    public void setTeams(Set<Team> teams) {
-        this.teams = teams;
-    }
-
-    public Set<Match> getMatches() {
-        return matches;
-    }
-
-    public void setMatches(Set<Match> matches) {
-        this.matches = matches;
+    public void setMainJudge(Human mainJudge) {
+        this.mainJudge = mainJudge;
     }
 
     @Override
@@ -114,8 +166,6 @@ public class Tournament {
         return "Tournament{" +
                 "id=" + id +
                 ", name='" + name + '\'' +
-                ", format='" + format + '\'' +
-                ", city='" + city + '\'' +
                 ", sportDiscipline=" + sportDiscipline +
                 '}';
     }
@@ -127,13 +177,11 @@ public class Tournament {
         Tournament that = (Tournament) o;
         return Objects.equals(id, that.id) &&
                 Objects.equals(name, that.name) &&
-                Objects.equals(format, that.format) &&
-                Objects.equals(city, that.city) &&
                 Objects.equals(sportDiscipline, that.sportDiscipline);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, name, format, city, sportDiscipline);
+        return Objects.hash(id, name, sportDiscipline);
     }
 }

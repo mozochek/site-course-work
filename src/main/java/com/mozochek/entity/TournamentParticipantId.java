@@ -1,49 +1,47 @@
 package com.mozochek.entity;
 
-import javax.persistence.Column;
 import javax.persistence.Embeddable;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import java.io.Serializable;
 import java.util.Objects;
 
 @Embeddable
 public class TournamentParticipantId implements Serializable {
 
-    @Column(name = "human_id", nullable = false)
-    private Integer humanId;
+    @ManyToOne(targetEntity = Team.class)
+    @JoinColumn(name = "team_id", nullable = false)
+    private Team team;
 
-    @Column(name = "team_id", nullable = false)
-    private Integer teamId;
+    @ManyToOne(targetEntity = Human.class)
+    @JoinColumn(name = "human_id", nullable = false)
+    private Human human;
 
     public TournamentParticipantId() {
 
     }
 
-    public TournamentParticipantId(Integer humanId, Integer teamId) {
-        this.humanId = humanId;
-        this.teamId = teamId;
+    public Team getTeam() {
+        return team;
     }
 
-    public Integer getHumanId() {
-        return humanId;
+    public void setTeam(Team team) {
+        this.team = team;
     }
 
-    public void setHumanId(Integer humanId) {
-        this.humanId = humanId;
+    public Human getHuman() {
+        return human;
     }
 
-    public Integer getTeamId() {
-        return teamId;
-    }
-
-    public void setTeamId(Integer teamId) {
-        this.teamId = teamId;
+    public void setHuman(Human human) {
+        this.human = human;
     }
 
     @Override
     public String toString() {
         return "TournamentParticipantId{" +
-                "humanId=" + humanId +
-                ", teamId=" + teamId +
+                "team=" + team +
+                ", human=" + human +
                 '}';
     }
 
@@ -52,12 +50,12 @@ public class TournamentParticipantId implements Serializable {
         if (this == o) return true;
         if (!(o instanceof TournamentParticipantId)) return false;
         TournamentParticipantId that = (TournamentParticipantId) o;
-        return Objects.equals(humanId, that.humanId) &&
-                Objects.equals(teamId, that.teamId);
+        return Objects.equals(team, that.team) &&
+                Objects.equals(human, that.human);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(humanId, teamId);
+        return Objects.hash(team, human);
     }
 }

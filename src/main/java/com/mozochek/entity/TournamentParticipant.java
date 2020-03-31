@@ -1,6 +1,8 @@
 package com.mozochek.entity;
 
-import javax.persistence.*;
+import javax.persistence.EmbeddedId;
+import javax.persistence.Entity;
+import javax.persistence.Table;
 import java.util.Objects;
 
 @Entity
@@ -10,21 +12,8 @@ public class TournamentParticipant {
     @EmbeddedId
     private TournamentParticipantId id;
 
-    @ManyToOne(targetEntity = Human.class)
-    @MapsId("humanId")
-    private Human human;
-
-    @ManyToOne(targetEntity = Team.class)
-    @MapsId("teamId")
-    private Team team;
-
     public TournamentParticipant() {
 
-    }
-
-    public TournamentParticipant(Human human, Team team) {
-        this.human = human;
-        this.team = team;
     }
 
     public TournamentParticipantId getId() {
@@ -35,28 +24,10 @@ public class TournamentParticipant {
         this.id = id;
     }
 
-    public Human getHuman() {
-        return human;
-    }
-
-    public void setHuman(Human human) {
-        this.human = human;
-    }
-
-    public Team getTeam() {
-        return team;
-    }
-
-    public void setTeam(Team team) {
-        this.team = team;
-    }
-
     @Override
     public String toString() {
         return "TournamentParticipant{" +
                 "id=" + id +
-                ", human=" + human +
-                ", team=" + team +
                 '}';
     }
 
@@ -65,13 +36,11 @@ public class TournamentParticipant {
         if (this == o) return true;
         if (!(o instanceof TournamentParticipant)) return false;
         TournamentParticipant that = (TournamentParticipant) o;
-        return Objects.equals(id, that.id) &&
-                Objects.equals(human, that.human) &&
-                Objects.equals(team, that.team);
+        return Objects.equals(id, that.id);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, human, team);
+        return Objects.hash(id);
     }
 }
