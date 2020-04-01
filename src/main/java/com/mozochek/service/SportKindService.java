@@ -11,13 +11,11 @@ import static com.mozochek.utils.LengthConstants.CODE_LENGTH;
 import static com.mozochek.utils.LengthConstants.SPORT_KIND_NAME_LENGTH;
 
 @Service
-public class SportKindService {
+public class SportKindService extends AbstractService {
 
     private SportKindRepository sportKindRepository;
 
     private SportKind sportKind;
-    private HashMap<String, String> errors;
-    private HashMap<String, String> previousValues;
 
     public SportKindService(SportKindRepository sportKindRepository) {
         this.sportKindRepository = sportKindRepository;
@@ -47,7 +45,7 @@ public class SportKindService {
         if (code.length() != CODE_LENGTH || StringUtils.containsWhitespace(code)) {
             errors.put("codeError", "Код должен состоять из " + CODE_LENGTH + " символов(без пробелов)!");
         }
-        if (existenceCheck(name, code)) {
+        if (isExist(name, code)) {
             errors.put("objectExist", "Данный вид спорта уже находится в базе данных!");
         }
     }
@@ -61,32 +59,7 @@ public class SportKindService {
         }
     }
 
-    private boolean existenceCheck(String name, String code) {
+    private boolean isExist(String name, String code) {
         return sportKindRepository.findByNameAndCode(name, code) != null;
-    }
-
-    private void validateField(String str, int maxLength, String errorName) {
-        if (isBlankOrEmpty(str)) {
-            errors.put(errorName, "Заполните поле!");
-        }
-        if (isLengthIncorrect(str, maxLength)) {
-            errors.put(errorName, "Длина поля не должна превышать " + maxLength + "символов!");
-        }
-    }
-
-    private boolean isBlankOrEmpty(String str) {
-        return StringUtils.isEmpty(str) || str.isBlank();
-    }
-
-    private boolean isLengthIncorrect(String str, int length) {
-        return str.length() > length;
-    }
-
-    public HashMap<String, String> getErrors() {
-        return errors;
-    }
-
-    public HashMap<String, String> getPreviousValues() {
-        return previousValues;
     }
 }

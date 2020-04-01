@@ -9,19 +9,18 @@ import org.springframework.util.StringUtils;
 
 import java.util.HashMap;
 
-import static com.mozochek.utils.LengthConstants.*;
+import static com.mozochek.utils.LengthConstants.CODE_LENGTH;
+import static com.mozochek.utils.LengthConstants.SPORT_DISCIPLINE_NAME_LENGTH;
 
 
 @Service
-public class SportDisciplineService {
+public class SportDisciplineService extends AbstractService {
 
     private SportKindRepository sportKindRepository;
     private SportDisciplineRepository sportDisciplineRepository;
 
     private SportKind sportKind;
     private SportDiscipline sportDiscipline;
-    private HashMap<String, String> errors;
-    private HashMap<String, String> previousValues;
 
     public SportDisciplineService(SportKindRepository sportKindRepository, SportDisciplineRepository sportDisciplineRepository) {
         this.sportKindRepository = sportKindRepository;
@@ -77,30 +76,5 @@ public class SportDisciplineService {
     private boolean isExist(Integer sportKindId, String sportDisciplineName, String sportDisciplineCode) {
         return sportDisciplineRepository
                 .findBySportKindIdAndNameAndCode(sportKindId, sportDisciplineName, sportDisciplineCode) != null;
-    }
-
-    private void validateField(String str, int maxLength, String errorName) {
-        if (isBlankOrEmpty(str)) {
-            errors.put(errorName, "Заполните поле!");
-        }
-        if (isLengthIncorrect(str, maxLength)) {
-            errors.put(errorName, "Длина поля не должна превышать " + maxLength + "символов!");
-        }
-    }
-
-    private boolean isBlankOrEmpty(String str) {
-        return StringUtils.isEmpty(str) || str.isBlank();
-    }
-
-    private boolean isLengthIncorrect(String str, int length) {
-        return str.length() > length;
-    }
-
-    public HashMap<String, String> getErrors() {
-        return errors;
-    }
-
-    public HashMap<String, String> getPreviousValues() {
-        return previousValues;
     }
 }

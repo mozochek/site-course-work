@@ -3,23 +3,18 @@ package com.mozochek.service;
 import com.mozochek.entity.Tournament;
 import com.mozochek.repository.TournamentRepository;
 import org.springframework.stereotype.Service;
-import org.springframework.util.StringUtils;
 
-import java.sql.Date;
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.HashMap;
 
 import static com.mozochek.utils.LengthConstants.*;
 
 @Service
-public class TournamentService {
+public class TournamentService extends AbstractService {
 
     private TournamentRepository tournamentRepository;
 
     private Tournament tournament;
-    private HashMap<String, String> errors;
-    private HashMap<String, String> previousValues;
 
     public TournamentService(TournamentRepository tournamentRepository) {
         this.tournamentRepository = tournamentRepository;
@@ -52,40 +47,6 @@ public class TournamentService {
         tournament.setDateTill(validateAndFormatDate(dateTill, "dateTillError"));
     }
 
-    private void validateField(String str, int maxLength, String errorName) {
-        if (isBlankOrEmpty(str)) {
-            errors.put(errorName, "Заполните поле!");
-        }
-        if (isLengthIncorrect(str, maxLength)) {
-            errors.put(errorName, "Длина поля не должна превышать " + maxLength + "символов!");
-        }
-    }
-
-    private Date validateAndFormatDate(String date, String errorName) {
-        if (date.length() != DATE_LENGTH || date.isBlank()) {
-            errors.put(errorName, "Введите дату в формате 'дд.мм.гггг'!");
-            return null;
-        } else {
-            SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd-MM-yyyy");
-            date = date.replace('.', '-');
-            Date formattedDate = null;
-            try {
-                formattedDate = new Date(simpleDateFormat.parse(date).getTime());
-            } catch (ParseException e) {
-                errors.put(errorName, "Введите дату в формате 'дд.мм.гггг'!");
-            }
-            return formattedDate;
-        }
-    }
-
-    private boolean isBlankOrEmpty(String str) {
-        return StringUtils.isEmpty(str) || str.isBlank();
-    }
-
-    private boolean isLengthIncorrect(String str, int maxLength) {
-        return str.length() > maxLength;
-    }
-
     private void setPreviousValues() {
         if (errors.get("nameError") == null) {
             previousValues.put("prevName", tournament.getName());
@@ -115,13 +76,5 @@ public class TournamentService {
         if (errors.get("dateTillError") == null) {
             previousValues.put("prevDateTill", simpleDateFormat.format(tournament.getDateTill()).replace('-', '.'));
         }
-    }
-
-    public HashMap<String, String> getErrors() {
-        return errors;
-    }
-
-    public HashMap<String, String> getPreviousValues() {
-        return previousValues;
     }
 }
