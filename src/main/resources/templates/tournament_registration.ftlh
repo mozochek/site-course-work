@@ -4,7 +4,7 @@
     <div class="text-center mt-lg-2">
         <h2>Регистрация нового турнира</h2>
     </div>
-    <form action="/tournament/registration" method="post">
+    <form action="/admin/tournament/registration" method="post">
         <div class="col-lg-5">
             <div class="form-group mt-lg-3">
                 <label for="sportKindSelector">Выберите вид спорта</label>
@@ -20,7 +20,7 @@
                     <input class="form-control is-invalid" type="hidden" id="submitFeedback" name="submitFeedback">
                     <div class="invalid-feedback" for="submitFeedback">
                         ${sportDisciplinesError}
-                         <a href="/sport_discipline/add">Добавить</a>
+                         <a href="/admin/sport_discipline/add">Добавить</a>
                     </div>
                 </#if>
             </div>

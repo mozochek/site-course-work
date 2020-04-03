@@ -4,7 +4,7 @@
     <div class="text-center mt-lg-2">
         <h2><label name="tournamentName">${(tournament.name)!"Турнир"}</label></h2>
     </div>
-    <form action="/tournament/settings" method="post">
+    <form action="/admin/tournament/settings" method="post">
     <div class="container">
         <div class="col-lg-8">
             <div class="form-group>
@@ -19,13 +19,19 @@
 
             <div class="form-group">
                 <label for="sportDisciplineSelector">Выберите спортивную дисциплину</label>
-                <select class="custom-select" id="sportDisciplineSelector" name="tournamentSportDiscipline" required>
+                <select class="custom-select" id="sportDisciplineSelector" name="tournamentSportDisciplineId" required>
                     <#if sportDisciplines??>
                     <#list sportDisciplines as sportDiscipline>
                         <option value="${sportDiscipline.id}">${sportDiscipline.code} | ${sportDiscipline.name}</option>
                     </#list>
                     </#if>
                 </select>
+                <input class="form-control<#if sportDisciplineError??> is-invalid</#if>" type="hidden" id="sportDisciplineFeedback" name="sportDisciplineFeedback">
+                <#if sportDisciplineError??>
+                    <div class="invalid-feedback" for="sportDisciplineFeedback">
+                        ${sportDisciplineError}
+                    </div>
+                </#if>
             </div>
 
             <div class="form-row form-group">

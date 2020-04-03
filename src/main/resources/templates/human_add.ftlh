@@ -4,7 +4,7 @@
     <div class="text-center mt-lg-2">
         <h2>Добавить человека</h2>
     </div>
-    <form action="/human/add" method="post">
+    <form action="/admin/human/add" method="post">
         <div class="col-lg-5">
             <div class="form-group">
                 <label for="humanName">Имя*</label>
@@ -55,14 +55,14 @@
             </div>
             <div class="form-group">
                 <button type="submit" class="btn btn-outline-success">Добавить</button>
-                <input class="form-control<#if objectExist??> is-invalid <#elseif dataIsValid??> is-valid</#if>" type="hidden" id="submitFeedback" name="submitFeedback">
+                <input class="form-control<#if objectExist??> is-invalid <#elseif saveSuccessful??> is-valid</#if>" type="hidden" id="submitFeedback" name="submitFeedback">
                 <#if objectExist??>
                     <div class="invalid-feedback" for="submitFeedback">
                         ${objectExist}
                     </div>
-                <#elseif dataIsValid??>
+                <#elseif saveSuccessful??>
                     <div class="valid-feedback" for="submitFeedback">
-                        ${dataIsValid}
+                        ${saveSuccessful}
                     </div>
                 </#if>
             </div>

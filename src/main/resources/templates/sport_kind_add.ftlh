@@ -4,7 +4,7 @@
     <div class="text-center mt-lg-2">
         <h2>Добавить вид спорта</h2>
     </div>
-    <form action="/sport_kind/add" method="post">
+    <form action="/admin/sport_kind/add" method="post">
         <div class="col-lg-5">
             <div class="form-group">
                 <label for="sportKindName">Название вида спорта*</label>
@@ -28,14 +28,14 @@
 
             <div class="form-group">
                 <button type="submit" class="btn btn-outline-success">Добавить</button>
-                <input class="form-control<#if objectExist??> is-invalid <#elseif dataIsValid??> is-valid</#if>" type="hidden" id="submitFeedback" name="submitFeedback">
+                <input class="form-control<#if objectExist??> is-invalid <#elseif saveSuccessful??> is-valid</#if>" type="hidden" id="submitFeedback" name="submitFeedback">
                 <#if objectExist??>
                     <div class="invalid-feedback" for="submitFeedback">
                         ${objectExist}
                     </div>
-                <#elseif dataIsValid??>
+                <#elseif saveSuccessful??>
                     <div class="valid-feedback" for="submitFeedback">
-                        ${dataIsValid}
+                        ${saveSuccessful}
                     </div>
                 </#if>
             </div>
