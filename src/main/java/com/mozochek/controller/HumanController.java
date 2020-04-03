@@ -9,8 +9,10 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import static com.mozochek.utils.LengthConstants.*;
+
 @Controller
-@RequestMapping("/human")
+@RequestMapping("admin/human")
 public class HumanController {
 
     private HumanService humanService;
@@ -20,7 +22,8 @@ public class HumanController {
     }
 
     @GetMapping("/add")
-    public String add() {
+    public String add(Model model) {
+        addFieldsLengthConstants(model);
         return "human_add";
     }
 
@@ -37,15 +40,23 @@ public class HumanController {
         human.setPatronymic(humanPatronymic);
         human.setCity(humanCity);
 
-        boolean isAdded = humanService.addHuman(human, humanBirthDate);
+        boolean isSavedSuccessfully = humanService.addHuman(human, humanBirthDate);
 
-        if (isAdded) {
-            model.addAttribute("dataIsValid", "Успешно добавлено!");
+        if (isSavedSuccessfully) {
+            model.addAttribute("saveSuccessful", "Успешно добавлено!");
         } else {
             model.addAllAttributes(humanService.getErrors());
             model.addAllAttributes(humanService.getPreviousValues());
         }
+        addFieldsLengthConstants(model);
         return "human_add";
     }
 
+    private void addFieldsLengthConstants(Model model) {
+        model.addAttribute("humanNameLength", HUMAN_NAME_LENGTH);
+        model.addAttribute("humanSurnameLength", HUMAN_SURNAME_LENGTH);
+        model.addAttribute("humanPatronymicLength", HUMAN_PATRONYMIC_LENGTH);
+        model.addAttribute("dateLength", DATE_LENGTH);
+        model.addAttribute("cityLength", CITY_LENGTH);
+    }
 }

@@ -1,8 +1,6 @@
 package com.mozochek.controller;
 
-import com.mozochek.entity.Tournament;
 import com.mozochek.repository.TournamentRepository;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -10,8 +8,11 @@ import org.springframework.web.bind.annotation.GetMapping;
 @Controller
 public class MainController {
 
-    @Autowired
     TournamentRepository tournamentRepository;
+
+    public MainController(TournamentRepository tournamentRepository) {
+        this.tournamentRepository = tournamentRepository;
+    }
 
     @GetMapping("/")
     public String index() {
@@ -20,8 +21,7 @@ public class MainController {
 
     @GetMapping("/tournaments")
     public String main(Model model) {
-        Iterable<Tournament> tournaments = tournamentRepository.findAll();
-        model.addAttribute("tournaments", tournaments);
+        model.addAttribute("tournaments", tournamentRepository.findAll());
         return "tournaments";
     }
 

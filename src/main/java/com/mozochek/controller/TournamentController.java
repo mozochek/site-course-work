@@ -13,13 +13,12 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.springframework.web.servlet.view.RedirectView;
 
-import java.util.ArrayList;
 import java.util.Optional;
 
 import static com.mozochek.utils.LengthConstants.*;
 
 @Controller
-@RequestMapping("/tournament")
+//@RequestMapping("/admin/tournament")
 public class TournamentController {
 
     private SportKindRepository sportKindRepository;
@@ -28,7 +27,6 @@ public class TournamentController {
     private TournamentService tournamentService;
 
     private Iterable<SportKind> sportKinds;
-    private Tournament tournament;
 
     public TournamentController(SportKindRepository sportKindRepository,
                                 SportDisciplineRepository sportDisciplineRepository,
@@ -40,8 +38,9 @@ public class TournamentController {
         this.tournamentService = tournamentService;
     }
 
-    @GetMapping("/{id}")
-    public String showTournamentInfo(Model model, @PathVariable(name = "id") Integer id) {
+    @GetMapping("/tournament/{id}")
+    public String showTournamentInfo(Model model,
+                                     @PathVariable(name = "id") Integer id) {
         Optional<Tournament> tournament = tournamentRepository.findById(id);
         if (tournament.isPresent()) {
             model.addAttribute("tournament", tournament.get());
@@ -50,22 +49,20 @@ public class TournamentController {
         return "redirect:/tournaments";
     }
 
-    @GetMapping("/registration")
+    @GetMapping("/admin/tournament/registration")
     public String tournamentRegistration(Model model) {
         model.addAttribute("sportKinds", sportKindRepository.findAll());
         return "tournament_registration";
     }
 
-    @PostMapping("/registration")
+    @PostMapping("/admin/tournament/registration")
     public Object tournamentRegistration(@RequestParam(name = "sportKind") Integer sportKindId,
                                          RedirectAttributes redirectAttributes,
                                          Model model) {
-        ArrayList<SportDiscipline> sportDisciplines = (ArrayList<SportDiscipline>) sportDisciplineRepository.findBySportKindId(sportKindId);
-
-        RedirectView redirectView;
         if (isSportKindHaveDisciplines(sportKindId)) {
-            redirectView = new RedirectView("/tournament/settings");
-            redirectAttributes.addFlashAttribute("sportDisciplines", sportDisciplines);
+            RedirectView redirectView = new RedirectView("/admin/tournament/settings");
+            redirectAttributes.addFlashAttribute("sportKindId", sportKindId);//
+            redirectAttributes.addFlashAttribute("sportDisciplines", sportDisciplineRepository.findBySportKindId(sportKindId));
             redirectAttributes.addFlashAttribute("isRedirected", "yes");
             return redirectView;
         }
@@ -75,7 +72,7 @@ public class TournamentController {
         return "tournament_registration";
     }
 
-    @GetMapping("/settings")
+    @GetMapping("/admin/tournament/settings")
     public String tournamentSettings(@ModelAttribute("isRedirected") String isRedirected,
                                      Model model) {
         if (isRedirected == null) {
@@ -85,39 +82,36 @@ public class TournamentController {
         return "tournament_settings";
     }
 
-    @PostMapping("/settings")
-    public String tournamentSettings(@RequestParam(name = "tournamentSportDiscipline") Integer tournamentSportDisciplineId,
-                                     @RequestParam String tournamentName,
-                                     @RequestParam String tournamentCity,
-                                     @RequestParam String tournamentDateFrom,
-                                     @RequestParam String tournamentDateTill,
+    @PostMapping("/admin/tournament/settings")
+    public String tournamentSettings(@RequestParam String tournamentName,
                                      @RequestParam String tournamentFormat,
-                                     @RequestParam String tournamentGender,
+                                     @RequestParam String tournamentCity,
                                      @RequestParam String tournamentAgeGroup,
+                                     @RequestParam String tournamentGender,
                                      @RequestParam String tournamentCategory,
                                      @RequestParam String tournamentClass,
+                                     @RequestParam Integer tournamentSportDisciplineId,
+                                     @RequestParam String tournamentDateFrom,
+                                     @RequestParam String tournamentDateTill,
                                      Model model) {
-        tournament = new Tournament();
-        tournament.setName(tournamentName);
-        tournament.setSportDiscipline(sportDisciplineRepository.findById(tournamentSportDisciplineId).get());
-        tournament.setCity(tournamentCity);
-        tournament.setFormat(tournamentFormat);
-        tournament.setGender(tournamentGender);
-        tournament.setAgeGroup(tournamentAgeGroup);
-        tournament.setCategory(tournamentCategory);
-        tournament.setTournamentClass(tournamentClass);
-
-        boolean isAdded = tournamentService.addTournament(tournament, tournamentDateFrom, tournamentDateTill);
-
-        if (isAdded) {
-            return "redirect:/tournament/" + tournament.getId();
+        // Тут не проверяется ID вида спорта у спортивной дисциплины, поэтому тут может быть ошибка, если HTML-форму ручками подправить и отправить POST
+        Optional<SportDiscipline> sportDiscipline = sportDisciplineRepository.findById(tournamentSportDisciplineId);
+        if (sportDiscipline.isEmpty()) {
+            return "redirect:/admin/tournament/registration";
         }
-        addFieldsLengthConstants(model);
+
+        Tournament tournament = new Tournament(tournamentName, tournamentFormat, tournamentCity, tournamentAgeGroup, tournamentGender, tournamentCategory, tournamentClass);
+        tournament.setSportDiscipline(sportDisciplineRepository.findById(tournamentSportDisciplineId).get());
+
+        boolean isSavedSuccessfully = tournamentService.addTournament(tournament, tournamentDateFrom, tournamentDateTill);
+        if (isSavedSuccessfully) {
+            return "redirect:tournament/" + tournament.getId();
+        }
         model.addAllAttributes(tournamentService.getErrors());
         model.addAllAttributes(tournamentService.getPreviousValues());
         model.addAttribute("sportDisciplines", sportDisciplineRepository.findBySportKindId(sportDisciplineRepository.findById(tournament.getSportDiscipline().getId()).get().getSportKind().getId()));
+        addFieldsLengthConstants(model);
         return "tournament_settings";
-
     }
 
     private void addFieldsLengthConstants(Model model) {
@@ -132,7 +126,6 @@ public class TournamentController {
     }
 
     private boolean isSportKindHaveDisciplines(Integer sportKindId) {
-        ArrayList<SportDiscipline> sportDisciplines = (ArrayList<SportDiscipline>) sportDisciplineRepository.findBySportKindId(sportKindId);
-        return sportDisciplines.size() > 0;
+        return sportDisciplineRepository.findBySportKindId(sportKindId).iterator().hasNext();
     }
 }

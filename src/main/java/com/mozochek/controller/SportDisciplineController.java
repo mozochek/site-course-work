@@ -1,6 +1,5 @@
 package com.mozochek.controller;
 
-import com.mozochek.entity.SportKind;
 import com.mozochek.repository.SportKindRepository;
 import com.mozochek.service.SportDisciplineService;
 import org.springframework.stereotype.Controller;
@@ -10,20 +9,15 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import java.util.ArrayList;
-
 import static com.mozochek.utils.LengthConstants.CODE_LENGTH;
 import static com.mozochek.utils.LengthConstants.SPORT_DISCIPLINE_NAME_LENGTH;
 
 @Controller
-@RequestMapping("/sport_discipline")
+@RequestMapping("admin/sport_discipline")
 public class SportDisciplineController {
 
     private SportKindRepository sportKindRepository;
     private SportDisciplineService sportDisciplineService;
-
-    private ArrayList<SportKind> sportKinds;
-
 
     public SportDisciplineController(SportKindRepository sportKindRepository, SportDisciplineService sportDisciplineService) {
         this.sportKindRepository = sportKindRepository;
@@ -32,28 +26,25 @@ public class SportDisciplineController {
 
     @GetMapping("/add")
     public String add(Model model) {
+        model.addAttribute("sportKinds", sportKindRepository.findAll());
         addFieldsLengthConstants(model);
-        System.out.println(model.getAttribute("prevSelectedSportKind"));
-        sportKinds = (ArrayList<SportKind>) sportKindRepository.findAll();
-        model.addAttribute("sportKinds", sportKinds);
         return "sport_discipline_add";
     }
 
     @PostMapping("/add")
     public String save(@RequestParam(name = "sportKind") Integer sportKindId,
-                      @RequestParam(name = "sportDisciplineName") String sportDisciplineName,
-                      @RequestParam(name = "sportDisciplineCode") String sportDisciplineCode,
-                      Model model) {
-        addFieldsLengthConstants(model);
-        sportKinds = (ArrayList<SportKind>) sportKindRepository.findAll();
-        model.addAttribute("sportKinds", sportKinds);
-        boolean isAdded = sportDisciplineService.addSportDiscipline(sportKindId, sportDisciplineName, sportDisciplineCode);
-        if (isAdded) {
-            model.addAttribute("dataIsValid", "Успешно добавлено!");
+                       @RequestParam(name = "sportDisciplineName") String sportDisciplineName,
+                       @RequestParam(name = "sportDisciplineCode") String sportDisciplineCode,
+                       Model model) {
+        boolean isSavedSuccessfully = sportDisciplineService.addSportDiscipline(sportKindId, sportDisciplineName, sportDisciplineCode);
+        if (isSavedSuccessfully) {
+            model.addAttribute("saveSuccessful", "Успешно добавлено!");
         } else {
             model.addAllAttributes(sportDisciplineService.getErrors());
             model.addAllAttributes(sportDisciplineService.getPreviousValues());
         }
+        model.addAttribute("sportKinds", sportKindRepository.findAll());
+        addFieldsLengthConstants(model);
         return "sport_discipline_add";
     }
 

@@ -1,5 +1,6 @@
 package com.mozochek.controller;
 
+import com.mozochek.entity.SportKind;
 import com.mozochek.service.SportKindService;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -12,7 +13,7 @@ import static com.mozochek.utils.LengthConstants.CODE_LENGTH;
 import static com.mozochek.utils.LengthConstants.SPORT_KIND_NAME_LENGTH;
 
 @Controller
-@RequestMapping("/sport_kind")
+@RequestMapping("admin/sport_kind")
 public class SportKindController {
 
     private SportKindService sportKindService;
@@ -22,23 +23,23 @@ public class SportKindController {
     }
 
     @GetMapping("/add")
-    public String add(Model model) {
+    public String addSportKind(Model model) {
         addFieldsLengthConstants(model);
         return "sport_kind_add";
     }
 
     @PostMapping("/add")
-    public String save(@RequestParam(name = "sportKindName") String sportKindName,
-                      @RequestParam(name = "sportKindCode") String sportKindCode,
-                      Model model) {
-        addFieldsLengthConstants(model);
-        boolean isAdded = sportKindService.addSportKind(sportKindName, sportKindCode);
-        if (isAdded) {
-            model.addAttribute("dataIsValid", "Успешно добавлено!");
+    public String saveSportKind(@RequestParam String sportKindName,
+                                @RequestParam String sportKindCode,
+                                Model model) {
+        boolean isSavedSuccessfully = sportKindService.addSportKind(new SportKind(sportKindName, sportKindCode));
+        if (isSavedSuccessfully) {
+            model.addAttribute("saveSuccessful", "Успешно добавлено!");
         } else {
             model.addAllAttributes(sportKindService.getErrors());
             model.addAllAttributes(sportKindService.getPreviousValues());
         }
+        addFieldsLengthConstants(model);
         return "sport_kind_add";
     }
 
