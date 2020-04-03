@@ -24,6 +24,11 @@ public class SportKind {
 
     }
 
+    public SportKind(String name, String code) {
+        this.name = name;
+        this.code = code;
+    }
+
     public Integer getId() {
         return id;
     }

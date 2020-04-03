@@ -57,6 +57,16 @@ public class Tournament {
 
     }
 
+    public Tournament(String name, String format, String city, String ageGroup, String gender, String category, String tournamentClass) {
+        this.name = name;
+        this.format = format;
+        this.city = city;
+        this.ageGroup = ageGroup;
+        this.gender = gender;
+        this.category = category;
+        this.tournamentClass = tournamentClass;
+    }
+
     public Integer getId() {
         return id;
     }
