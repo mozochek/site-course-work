@@ -18,4 +18,7 @@ public interface LengthConstants {
     int HUMAN_NAME_LENGTH = 30;
     int HUMAN_SURNAME_LENGTH = 30;
     int HUMAN_PATRONYMIC_LENGTH = 30;
+
+    int USERNAME_LENGTH = 30;
+    int PASSWORD_LENGTH = 100;
 }
