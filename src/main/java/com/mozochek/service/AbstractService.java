@@ -15,11 +15,10 @@ public abstract class AbstractService {
     HashMap<String, String> previousValues;
 
     public AbstractService() {
-        /*errors = new HashMap<>();
-        previousValues = new HashMap<>();*/
+
     }
 
-    void validateField(String str, int maxLength, String errorName) {
+    public void validateField(String str, int maxLength, String errorName) {
         if (isBlankOrEmpty(str)) {
             errors.put(errorName, "Заполните поле!");
         }
@@ -28,28 +27,50 @@ public abstract class AbstractService {
         }
     }
 
-    Date validateAndFormatDate(String date, String errorName) {
+    public void validateDate(String date, String errorName) {//
         if (date.length() != DATE_LENGTH || date.isBlank()) {
             errors.put(errorName, "Введите дату в формате 'дд.мм.гггг'!");
-            return null;
-        } else {
-            SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd-MM-yyyy");
-            date = date.replace('.', '-');
-            Date formattedDate = null;
-            try {
-                formattedDate = new Date(simpleDateFormat.parse(date).getTime());
-            } catch (ParseException e) {
-                errors.put(errorName, "Введите дату в формате 'дд.мм.гггг'!");
-            }
-            return formattedDate;
         }
     }
 
-    boolean isBlankOrEmpty(String str) {
+    public Date formatDate(String date, String errorName) {//
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd-MM-yyyy");
+        date = date.replace('.', '-');
+        Date formattedDate = null;
+        try {
+            formattedDate = new Date(simpleDateFormat.parse(date).getTime());
+        } catch (ParseException e) {
+            errors.put(errorName, "Введите дату в формате 'дд.мм.гггг'!");
+        }
+        return formattedDate;
+    }
+
+    public Date validateAndFormatDate(String date, String errorName) {//
+        validateDate(date, errorName);
+        if (errors.get(errorName) == null) {
+            return formatDate(date, errorName);
+        }
+        return null;
+        /*if (date.length() != DATE_LENGTH || date.isBlank()) {
+            errors.put(errorName, "Введите дату в формате 'дд.мм.гггг'!");
+            return null;
+        }
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd-MM-yyyy");
+        date = date.replace('.', '-');
+        Date formattedDate = null;
+        try {
+            formattedDate = new Date(simpleDateFormat.parse(date).getTime());
+        } catch (ParseException e) {
+            errors.put(errorName, "Введите дату в формате 'дд.мм.гггг'!");
+        }
+        return formattedDate;*/
+    }
+
+    public boolean isBlankOrEmpty(String str) {
         return StringUtils.isEmpty(str) || str.isBlank();
     }
 
-    boolean isLengthIncorrect(String str, int length) {
+    public boolean isLengthIncorrect(String str, int length) {
         return str.length() > length;
     }
 

@@ -1,6 +1,7 @@
 package com.mozochek.service;
 
 import com.mozochek.entity.Tournament;
+import com.mozochek.repository.SportDisciplineRepository;
 import com.mozochek.repository.TournamentRepository;
 import org.springframework.stereotype.Service;
 
@@ -12,11 +13,13 @@ import static com.mozochek.utils.LengthConstants.*;
 @Service
 public class TournamentService extends AbstractService {
 
+    private SportDisciplineRepository sportDisciplineRepository;
     private TournamentRepository tournamentRepository;
 
     private Tournament tournament;
 
-    public TournamentService(TournamentRepository tournamentRepository) {
+    public TournamentService(SportDisciplineRepository sportDisciplineRepository, TournamentRepository tournamentRepository) {
+        this.sportDisciplineRepository = sportDisciplineRepository;
         this.tournamentRepository = tournamentRepository;
     }
 

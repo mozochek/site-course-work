@@ -21,18 +21,16 @@ public class SportKindService extends AbstractService {
         this.sportKindRepository = sportKindRepository;
     }
 
-    public boolean addSportKind(String name, String code) {
-        sportKind = new SportKind();
-        sportKind.setName(name);
-        sportKind.setCode(code);
+    public boolean addSportKind(SportKind sportKind) {
+        this.sportKind = sportKind;
 
         errors = new HashMap<>();
         previousValues = new HashMap<>();
 
-        validateData(sportKind.getName(), sportKind.getCode());
+        validateData(this.sportKind.getName(), this.sportKind.getCode());
 
         if (errors.isEmpty()) {
-            sportKindRepository.save(sportKind);
+            sportKindRepository.save(this.sportKind);
             return true;
         }
         setPreviousValues();

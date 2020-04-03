@@ -22,7 +22,8 @@ public class SportDisciplineService extends AbstractService {
     private SportKind sportKind;
     private SportDiscipline sportDiscipline;
 
-    public SportDisciplineService(SportKindRepository sportKindRepository, SportDisciplineRepository sportDisciplineRepository) {
+    public SportDisciplineService(SportKindRepository sportKindRepository,
+                                  SportDisciplineRepository sportDisciplineRepository) {
         this.sportKindRepository = sportKindRepository;
         this.sportDisciplineRepository = sportDisciplineRepository;
     }
