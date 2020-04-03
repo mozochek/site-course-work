@@ -1,4 +1,5 @@
 <#import "page_elements.ftlh" as elem>
+
 <#macro page title="Заголовок">
     <!DOCTYPE html>
     <html lang="ru">
