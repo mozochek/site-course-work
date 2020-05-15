@@ -1,17 +1,20 @@
 package com.mozochek.controller;
 
-import com.mozochek.repository.TournamentRepository;
+import com.mozochek.service.TournamentService;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.HttpRequestHandler;
 import org.springframework.web.bind.annotation.GetMapping;
+
+import javax.servlet.http.HttpServletRequest;
 
 @Controller
 public class MainController {
 
-    TournamentRepository tournamentRepository;
+    private TournamentService tournamentService;
 
-    public MainController(TournamentRepository tournamentRepository) {
-        this.tournamentRepository = tournamentRepository;
+    public MainController(TournamentService tournamentService) {
+        this.tournamentService = tournamentService;
     }
 
     @GetMapping("/")
@@ -20,8 +23,8 @@ public class MainController {
     }
 
     @GetMapping("/tournaments")
-    public String main(Model model) {
-        model.addAttribute("tournaments", tournamentRepository.findAll());
+    public String tournaments(Model model) {
+        model.addAttribute("tournaments", tournamentService.findAllTournaments());
         return "tournaments";
     }
 
@@ -33,5 +36,10 @@ public class MainController {
     @GetMapping("/error")
     public String error() {
         return "error";
+    }
+
+    @GetMapping("/reference")
+    public String reference() {
+        return "reference";
     }
 }

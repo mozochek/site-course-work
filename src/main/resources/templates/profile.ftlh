@@ -1,12 +1,8 @@
-<#import "parts/html_default.ftlh" as html>
+<#import "parts/content.ftlh" as content>
 
-<@html.page "Мой профиль">
+<@content.zone pageTitleText="Профиль" isHeaderNeeded=false>
 <#include "parts/security.ftlh">
-    <div class="d-flex justify-content-center">
-        <div class="col-6">
-            <div class="text-center my-md-4">
-                <h3>${username}</h3>
-            </div>
-        </div>
-    </div>
-</@html.page>
+  <div class="text-center my-md-4">
+    <h3>${username}<#if user.isAdmin()><span class="badge badge-success">Администратор</span></#if></h3>
+  </div>
+</@content.zone>

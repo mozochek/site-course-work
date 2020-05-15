@@ -33,25 +33,47 @@ public class UserService extends AbstractService implements UserDetailsService {
         return user;
     }
 
-    public boolean addUser(User user) {
+    public boolean saveUser(User user, String password, String role) {
         this.user = user;
 
         errors = new HashMap<>();
 
-        validateData();
+        validateData(password);
+
         if (errors.isEmpty()) {
-            this.user.setRole(Role.USER);
+            if (Role.valueOf(role) == Role.USER) {
+                user.assignUserRole();
+            } else if (Role.valueOf(role) == Role.MODERATOR) {
+                user.assignModeratorRole();
+            } else if (Role.valueOf(role) == Role.ADMIN) {
+                user.assignAdminRole();
+            } else if (Role.valueOf(role) == Role.DEVELOPER) {
+                user.assignDeveloperRole();
+            } else {
+                user.assignUserRole();
+            }
             userRepository.save(this.user);
+            if (this.user.getId() == 1) {
+                user.assignDeveloperRole();
+                userRepository.save(this.user);
+            }
             return true;
         }
         return false;
     }
 
-    private void validateData() {
+    private void validateData(String password) {
         validateField(user.getUsername(), USERNAME_LENGTH, "usernameError");
-        validateField(user.getPassword(), PASSWORD_LENGTH, "passwordError");
+        validateField(password, PASSWORD_LENGTH, "passwordError");
+        if (password.length() < 5) {
+            errors.put("passwordError", "Длина парола должна превышать 6 символов!");
+        }
         if (userRepository.findByUsername(user.getUsername()) != null) {
             errors.put("saveError", "Пользователь с таким именем уже зарегестрирован!");
         }
+    }
+
+    public Iterable<User> findAllUsers() {
+        return userRepository.findAll();
     }
 }

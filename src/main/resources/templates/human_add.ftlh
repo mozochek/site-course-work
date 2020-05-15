@@ -1,71 +1,85 @@
-<#import "parts/html_default.ftlh" as html>
+<#import "parts/content.ftlh" as content>
+<#import "parts/buttons.ftlh" as button>
+<#import "parts/page_elems.ftlh" as elem>
 
-<@html.page "Добавить человека">
-    <div class="text-center mt-lg-2">
-        <h2>Добавить человека</h2>
-    </div>
-    <form action="/admin/human/add" method="post">
-        <div class="col-lg-5">
-            <div class="form-group">
-                <label for="humanName">Имя*</label>
-                <input type="text" maxlength="${humanNameLength!"30"}" <#if prevName??>value="${prevName}"</#if> class="form-control<#if nameError??> is-invalid</#if>" id="humanName" name="humanName" required>
-                <#if nameError??>
-                    <div class="invalid-feedback" for"humanName">
-                        ${nameError}
-                    </div>
-                </#if>
-            </div>
-            <div class="form-group">
-                <label for="humanSurname">Фамилия*</label>
-                <input type="text" maxlength="${humanSurnameLength!"30"}" <#if prevSurname??>value="${prevSurname}"</#if> class="form-control<#if surnameError??> is-invalid</#if>" id="humanSurname" name="humanSurname" required>
-                <#if surnameError??>
-                    <div class="invalid-feedback" for"humanSurname">
-                        ${surnameError}
-                    </div>
-                </#if>
-            </div>
-            <div class="form-group">
-                <label for="humanPatronymic">Отчество</label>
-                <input type="text" maxlength="${humanPatronymicLength!"30"}" <#if prevPatronymic??>value="${prevPatronymic}"</#if> class="form-control<#if patronymicError??> is-invalid</#if>" id="humanPatronymic" name="humanPatronymic">
-                <#if patronymicError??>
-                    <div class="invalid-feedback" for"humanPatronymic">
-                        ${patronymicError}
-                    </div>
-                </#if>
-            </div>
-            <div class="form-group">
-                <label for="humanBirthDate">Дата рождения*</label>
-                <input type="input" maxlength="${dateLength!"10"}" <#if prevBirthDate??>value="${prevBirthDate}"</#if> class="form-control<#if birthDateError??> is-invalid</#if>" id="humanBirthDate" name="humanBirthDate" required>
-                <#if birthDateError??>
-                    <div class="invalid-feedback" for"humanBirthDate">
-                        ${birthDateError}
-                    </div>
-                <#else>
-                    <small id="codeHelp" class="form-text text-muted">Дата рождения в формате: дд.мм.гггг</small>
-                </#if>
-            </div>
-            <div class="form-group">
-                <label for="humanCity">Город</label>
-                <input type="text" maxlength="${cityLength!"35"}" <#if prevCity??>value="${prevCity}"</#if> class="form-control<#if cityError??> is-invalid</#if>" id="humanCity" name="humanCity">
-                <#if cityError??>
-                    <div class="invalid-feedback" for"humanCity">
-                        ${cityError}
-                    </div>
-                </#if>
-            </div>
-            <div class="form-group">
-                <button type="submit" class="btn btn-outline-success">Добавить</button>
-                <input class="form-control<#if objectExist??> is-invalid <#elseif saveSuccessful??> is-valid</#if>" type="hidden" id="submitFeedback" name="submitFeedback">
-                <#if objectExist??>
-                    <div class="invalid-feedback" for="submitFeedback">
-                        ${objectExist}
-                    </div>
-                <#elseif saveSuccessful??>
-                    <div class="valid-feedback" for="submitFeedback">
-                        ${saveSuccessful}
-                    </div>
-                </#if>
-            </div>
+<#assign title="Добавить человека в базу данных">
+<#if (human.id)??>
+  <#assign title="Изменить данные о человеке">
+</#if>
+<@content.zone pageTitleText=title pageHeaderText=title>
+  <form method="post">
+    <!-- Поле ввода имени -->
+    <@elem.rowAlignment 6>
+      <input type="text" maxlength="${(fieldLength.HUMAN_NAME_LENGTH)!"30"}" <#if (human.name)??>value="${human.name}"</#if> class="form-control<#if nameError??> is-invalid</#if>" id="humanName" name="name" placeholder="Имя" required>
+      <#if nameError??>
+        <div class="invalid-feedback" for"humanName">
+          ${nameError}
         </div>
-    </form>
-</@html.page>
+      </#if>
+    </@elem.rowAlignment>
+    <!-- Поле ввода фамилии -->
+    <@elem.rowAlignment 6>
+      <input type="text" maxlength="${(fieldLength.HUMAN_SURNAME_LENGTH)!"30"}" <#if (human.surname)??>value="${human.surname}"</#if> class="form-control<#if surnameError??> is-invalid</#if>" id="humanSurname" name="surname" placeholder="Фамилия" required>
+      <#if surnameError??>
+        <div class="invalid-feedback" for"humanSurname">
+          ${surnameError}
+        </div>
+      </#if>
+    </@elem.rowAlignment>
+    <!-- Поле ввода отчества -->
+    <@elem.rowAlignment 6>
+      <input type="text" maxlength="${(fieldLength.HUMAN_PATRONYMIC_LENGTH)!"30"}" <#if (human.patronymic)??>value="${human.patronymic}"</#if> class="form-control<#if patronymicError??> is-invalid</#if>" id="humanPatronymic" name="patronymic" placeholder="Отчество(опционально)">
+      <#if patronymicError??>
+        <div class="invalid-feedback" for"humanPatronymic">
+          ${patronymicError}
+        </div>
+      </#if>
+    </@elem.rowAlignment>
+    <!-- Поле ввода дня рождения -->
+    <@elem.rowAlignment 6>
+      <input type="input" maxlength="${(fieldLength.DATE_LENGTH)!"10"}" <#if (human.birthDate)??>value="${human.printBirthDate()}"</#if> class="form-control<#if birthDateError??> is-invalid</#if>" id="humanBirthDate" name="birthDate" placeholder="Дата рождения(дд.мм.гггг)" required>
+      <#if birthDateError??>
+        <div class="invalid-feedback" for"humanBirthDate">
+          ${birthDateError}
+        </div>
+      </#if>
+    </@elem.rowAlignment>
+    <#if human??>
+      <@elem.genderSelector width=6 gender=(human.gender)/>
+    <#else>
+      <@elem.genderSelector width=6 />
+    </#if>
+    <!-- Поле ввода города -->
+    <@elem.rowAlignment 6>
+      <input type="text" maxlength="${(fieldLength.CITY_LENGTH)!"35"}" <#if (human.city)??>value="${human.city}"</#if> class="form-control<#if cityError??> is-invalid</#if>" id="humanCity" name="city" placeholder="Город(опционально)">
+      <#if cityError??>
+        <div class="invalid-feedback" for"humanCity">
+          ${cityError}
+        </div>
+      </#if>
+    </@elem.rowAlignment>
+    <#assign buttonTitle="Добавить">
+    <#if (human.id)??>
+      <#assign buttonTitle="Изменить">
+    </#if>
+    <@button.submit buttonTitle>
+      <#if peopleEmpty??>
+        <input class="form-control is-invalid" type="hidden" id="peopleFeedback" name="peopleFeedback">
+        <div class="invalid-feedback" for="peopleFeedback">
+          ${peopleEmpty}
+        </div>
+      </#if>
+      <#if objectExist??>
+        <input class="form-control is-invalid" type="hidden" id="submitFeedback" name="submitFeedback">
+        <div class="invalid-feedback" for="submitFeedback">
+          ${objectExist}
+        </div>
+      <#elseif saveSuccessful??>
+        <input class="form-control is-valid" type="hidden" id="submitFeedback" name="submitFeedback">
+        <div class="valid-feedback" for="submitFeedback">
+          ${saveSuccessful}
+        </div>
+      </#if>
+    </@button.submit>
+  </form>
+</@content.zone>

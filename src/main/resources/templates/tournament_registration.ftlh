@@ -1,29 +1,28 @@
-<#import "parts/html_default.ftlh" as html>
+<#import "parts/content.ftlh" as content>
+<#import "parts/buttons.ftlh" as button>
+<#import "parts/page_elems.ftlh" as elem>
 
-<@html.page "Регистрация нового турнира">
-    <div class="text-center mt-lg-2">
-        <h2>Регистрация нового турнира</h2>
-    </div>
-    <form action="/admin/tournament/registration" method="post">
-        <div class="col-lg-5">
-            <div class="form-group mt-lg-3">
-                <label for="sportKindSelector">Выберите вид спорта</label>
-                <select class="custom-select" id="sportKindSelector" name="sportKind" required>
-                    <#list sportKinds as sportKind>
-                        <option value="${sportKind.id}"<#if prevSelectedSportKind??><#if sportKind.id == prevSelectedSportKind> selected</#if></#if>>${sportKind.code} | ${sportKind.name}</option>
-                    </#list>
-                </select>
-            </div>
-            <div class="form-group">
-                <button type="submit" class="btn btn-outline-success">Продолжить</button>
-                <#if sportDisciplinesError??>
-                    <input class="form-control is-invalid" type="hidden" id="submitFeedback" name="submitFeedback">
-                    <div class="invalid-feedback" for="submitFeedback">
-                        ${sportDisciplinesError}
-                         <a href="/admin/sport_discipline/add">Добавить</a>
-                    </div>
-                </#if>
-            </div>
+<@content.zone pageTitleText="Регистрация нового турнира" pageHeaderText="Регистрация нового турнира">
+  <form method="post">
+    <!-- Выбор вида спорта -->
+    <@elem.rowAlignment 6>
+      <label for="sportKindSelector">Выберите вид спорта</label>
+      <select class="custom-select" id="sportKindSelector" name="sportKind" required>
+        <#list sportKinds?sort_by("code") as sportKind>
+          <option value="${(sportKind.id)!"-1"}"<#if prevSelectedSportKind?? && sportKind.id == prevSelectedSportKind> selected</#if>>${(sportKind.code)!"<код?>"} | ${(sportKind.name)!"<название?>"}</option>
+        <#else>
+          <option value="-1"><нет видов спорта?></option>
+        </#list>
+      </select>
+    </@elem.rowAlignment>
+    <@button.submit "Зарегестрировать">
+      <#if sportDisciplinesError??>
+        <input class="form-control is-invalid" type="hidden" id="submitFeedback" name="submitFeedback">
+        <div class="invalid-feedback" for="submitFeedback">
+          ${sportDisciplinesError}
+          <a href="/api/sport_discipline/add">Добавить</a>
         </div>
-    </form>
-</@html.page>
+      </#if>
+    </@button.submit>
+  </form>
+</@content.zone>

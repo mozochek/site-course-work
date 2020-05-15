@@ -1,14 +1,29 @@
 package com.mozochek.entity;
 
-import javax.persistence.*;
-import java.sql.Date;
-import java.util.Objects;
+import com.mozochek.utils.DateUtil;
+import com.mozochek.utils.Gender;
 
-import static com.mozochek.utils.LengthConstants.*;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Enumerated;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.ManyToMany;
+import javax.persistence.Table;
+import java.sql.Date;
+import java.util.HashSet;
+import java.util.Objects;
+import java.util.Set;
+
+import static com.mozochek.utils.LengthConstants.CITY_LENGTH;
+import static com.mozochek.utils.LengthConstants.HUMAN_NAME_LENGTH;
+import static com.mozochek.utils.LengthConstants.HUMAN_PATRONYMIC_LENGTH;
+import static com.mozochek.utils.LengthConstants.HUMAN_SURNAME_LENGTH;
 
 @Entity
-@Table(name = "humans", schema = "webdb")
-public class Human {
+@Table(name = "people", schema = "webdb")
+public class Human implements IrremovableEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -26,13 +41,37 @@ public class Human {
     @Column(length = CITY_LENGTH)
     private String city;
 
-    @Column(name = "birth_date")
+    @Column(nullable = false)
     private Date birthDate;
+
+    @Enumerated
+    @Column(columnDefinition = "int2")
+    private Gender gender;
+
+    // Многие-ко-многим с Tournament | Список турниров, на которых человек был судьей
+    @ManyToMany(mappedBy = "judges")
+    private Set<Tournament> tournamentsAsJudge;
+
+    // Многие-ко-многим с Team | Список команд, в которых был этот человек
+    @ManyToMany(mappedBy = "people")
+    private Set<Team> teams;
 
     public Human() {
 
     }
 
+    public Human(String name, String surname, String patronymic, String city, Date birthDate, Gender gender) {
+        this.name = capitalizeFirstCharacter(name);
+        this.surname = capitalizeFirstCharacter(surname);
+        this.patronymic = capitalizeFirstCharacter(patronymic);
+        this.city = capitalizeFirstCharacter(city);
+        this.birthDate = birthDate;
+        this.gender = gender;
+    }
+
+    /*
+     * Getters and setters
+     */
     public Integer getId() {
         return id;
     }
@@ -46,7 +85,7 @@ public class Human {
     }
 
     public void setName(String name) {
-        this.name = name;
+        this.name = capitalizeFirstCharacter(name);
     }
 
     public String getSurname() {
@@ -54,7 +93,7 @@ public class Human {
     }
 
     public void setSurname(String surname) {
-        this.surname = surname;
+        this.surname = capitalizeFirstCharacter(surname);
     }
 
     public String getPatronymic() {
@@ -62,7 +101,7 @@ public class Human {
     }
 
     public void setPatronymic(String patronymic) {
-        this.patronymic = patronymic;
+        this.patronymic = capitalizeFirstCharacter(patronymic);
     }
 
     public String getCity() {
@@ -70,7 +109,7 @@ public class Human {
     }
 
     public void setCity(String city) {
-        this.city = city;
+        this.city = capitalizeFirstCharacter(city);
     }
 
     public Date getBirthDate() {
@@ -81,6 +120,58 @@ public class Human {
         this.birthDate = birthDate;
     }
 
+    public String printBirthDate() {
+        return DateUtil.printFormattedDate(birthDate);
+    }
+
+    public Gender getGender() {
+        return gender;
+    }
+
+    public void setGender(Gender gender) {
+        this.gender = gender;
+    }
+
+    public Set<Tournament> getTournamentsAsJudge() {
+        return tournamentsAsJudge;
+    }
+
+    public void setTournamentsAsJudge(Set<Tournament> tournamentsAsJudge) {
+        this.tournamentsAsJudge = tournamentsAsJudge;
+    }
+
+    public Set<Team> getTeams() {
+        return teams;
+    }
+
+    public void setTeams(Set<Team> teams) {
+        this.teams = teams;
+    }
+
+    /*
+     * Helper methods
+     */
+    public void addTournamentAsJudge(Tournament tournament) {
+        if (tournamentsAsJudge == null) {
+            tournamentsAsJudge = new HashSet<>();
+        }
+        tournamentsAsJudge.add(tournament);
+    }
+
+    public void addTeam(Team team) {
+        if (teams == null) {
+            teams = new HashSet<>();
+        }
+        teams.add(team);
+    }
+
+    private String capitalizeFirstCharacter(String str) {
+        return str.substring(0, 1).toUpperCase() + str.substring(1);
+    }
+
+    /*
+     * toString, equals, hashCode
+     */
     @Override
     public String toString() {
         return "Human{" +

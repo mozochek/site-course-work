@@ -34,14 +34,18 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http
-                .csrf().disable().authorizeRequests()
-                .antMatchers("/admin/**", "/test").hasAuthority("ADMIN")
-                .antMatchers("/").permitAll()
+            .csrf().disable().authorizeRequests()
+                .antMatchers("/api/**").hasAuthority("MODERATOR")
+                .antMatchers("/admin/**").hasAuthority("ADMIN")
+                .antMatchers("/dev/**").hasAuthority("DEVELOPER")
+                .antMatchers("/", "/reference").permitAll()
                 .antMatchers("/login", "/registration").anonymous()
                 .anyRequest().authenticated()
-                .and()
-                .formLogin().loginPage("/login").defaultSuccessUrl("/tournaments")
-                .and()
+            .and()
+                .formLogin()
+                .loginPage("/login")
+                .defaultSuccessUrl("/tournaments", true)
+            .and()
                 .logout().deleteCookies("JSESSIONID").logoutUrl("/logout").logoutSuccessUrl("/");
     }
 }

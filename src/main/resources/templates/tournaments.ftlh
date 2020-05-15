@@ -1,42 +1,35 @@
-<#import "parts/html_default.ftlh" as html>
+<#import "parts/content.ftlh" as content>
 
-<@html.page "Главная страница">
-    <div class="text-center">
-        <p><h1>Это главная страница</h1></p>
-    </div>
-    <#if tournaments??>
-        <table class="table table-hover table-dark">
-        <caption>Список турниров</caption>
-            <thead>
-                <tr>
-                    <th scope="col-2">Название турнира</th>
-                    <th scope="col">Дисциплина</th>
-                    <th scope="col">Место проведения</th>
-                    <!--<th scope="col">Формат</th>-->
-                    <th scope="col">Дата проведения</th>
-                    <th scope="col">Ворастная группа</th>
-                    <th scope="col">Пол игроков</th>
-                    <!--<th scope="col">Категория</th>
-                    <th scope="col">Класс</th>-->
-                </tr>
-            </thead>
-            <tbody>
-            <#list tournaments as t>
-                <tr>
-                    <th scope="row"><a href="/tournament/${t.id}">${t.name}</a></th>
-                    <td>${t.sportDiscipline.getDescription()}</td>
-                    <td>${t.city}</td>
-                    <!--<td>${t.format}</td>-->
-                    <td>${t.dateFrom}-${t.dateTill}</td>
-                    <td>${t.ageGroup}</td>
-                    <td>${t.gender}</td>
-                    <!--<td>${t.category}</td>
-                    <td>${t.tournamentClass}</td>-->
-                </tr>
-            </#list>
-            </tbody>
-        </table>
-    <#else>
-        Нет турниров!
-    </#if>
-</@html.page>
+<@content.zone pageTitleText="Список турниров" pageHeaderText="Список турниров">
+  <#if tournaments??>
+    <!-- Список всех турниров -->
+    <table class="table table-responsive table-hover table-dark">
+      <thead>
+        <tr>
+          <th scope="col-2">Название турнира</th>
+          <th scope="col">Дисциплина</th>
+          <th scope="col">Место проведения</th>
+          <th scope="col">Дата проведения</th>
+          <th scope="col">Ворастная группа</th>
+          <th scope="col">Пол игроков</th>
+        </tr>
+      </thead>
+      <tbody>
+        <#list tournaments?sort_by("dateFrom")?reverse as t>
+          <tr>
+            <th scope="row"><a href="/tournament/${(t.id)!"-1"}">${(t.name)!"<название?>"}</a></th>
+            <td>${(t.sportDiscipline.getDescription())!"<вид спорт - дисциплина?>"}</td>
+            <td>${(t.city)!"<город?>"}</td>
+            <td>${(t.dateFrom)!"<дата с?>"}-${(t.dateTill)!"<дата до?>"}</td>
+            <td>${(t.ageGroup)!"<возростная группа?>"}</td>
+            <td>${(t.gender.getName())!"<пол игроков?>"}</td>
+          </tr>
+        <#else>
+          <tr><th scope="row"><нет турниров?></th></tr>
+        </#list>
+      </tbody>
+    </table>
+  <#else>
+    <span>Турниров нет!</span>
+  </#if>
+</@content.zone>

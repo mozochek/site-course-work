@@ -1,24 +1,35 @@
 package com.mozochek.entity;
 
-import javax.persistence.*;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.OneToMany;
+import javax.persistence.Table;
+import java.util.HashSet;
 import java.util.Objects;
+import java.util.Set;
 
 import static com.mozochek.utils.LengthConstants.CODE_LENGTH;
 import static com.mozochek.utils.LengthConstants.SPORT_KIND_NAME_LENGTH;
 
 @Entity
 @Table(name = "sport_kinds", schema = "webdb")
-public class SportKind {
+public class SportKind implements IrremovableEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    @Column(length = CODE_LENGTH)
+    @Column(nullable = false, length = CODE_LENGTH)
     private String code;
 
-    @Column(length = SPORT_KIND_NAME_LENGTH)
+    @Column(nullable = false, length = SPORT_KIND_NAME_LENGTH)
     private String name;
+
+    @OneToMany(targetEntity = SportDiscipline.class, mappedBy = "sportKind")
+    private Set<SportDiscipline> sportDisciplines;
 
     public SportKind() {
 
@@ -29,6 +40,9 @@ public class SportKind {
         this.code = code;
     }
 
+    /*
+     * Getters and setters
+     */
     public Integer getId() {
         return id;
     }
@@ -53,6 +67,27 @@ public class SportKind {
         this.name = name;
     }
 
+    public Set<SportDiscipline> getSportDisciplines() {
+        return sportDisciplines;
+    }
+
+    public void setSportDisciplines(Set<SportDiscipline> sportDisciplines) {
+        this.sportDisciplines = sportDisciplines;
+    }
+
+    /*
+     * Helper methods
+     */
+    public void addSportDiscipline(SportDiscipline sportDiscipline) {
+        if (sportDisciplines == null) {
+            sportDisciplines = new HashSet<>();
+        }
+        sportDisciplines.add(sportDiscipline);
+    }
+
+    /*
+     * toString, equals, hashCode
+     */
     @Override
     public String toString() {
         return "SportKind{" +

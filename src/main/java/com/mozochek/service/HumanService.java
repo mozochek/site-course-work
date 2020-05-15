@@ -2,9 +2,9 @@ package com.mozochek.service;
 
 import com.mozochek.entity.Human;
 import com.mozochek.repository.HumanRepository;
+import com.mozochek.utils.Gender;
 import org.springframework.stereotype.Service;
 
-import java.text.SimpleDateFormat;
 import java.util.HashMap;
 
 import static com.mozochek.utils.LengthConstants.*;
@@ -14,55 +14,64 @@ public class HumanService extends AbstractService {
 
     private HumanRepository humanRepository;
 
-    private Human human;
-
     public HumanService(HumanRepository humanRepository) {
         this.humanRepository = humanRepository;
     }
 
-    public boolean addHuman(Human human, String humanBirthDate) {
-        this.human = human;
+    public boolean saveHuman(Human human) {
         errors = new HashMap<>();
         previousValues = new HashMap<>();
 
-        validateData(humanBirthDate);
+        validateData(human);
 
         if (errors.isEmpty()) {
             humanRepository.save(human);
             return true;
         }
-        setPreviousValues();
+        previousValues.put("human", human);
         return false;
     }
 
-    private void validateData(String humanBirthDate) {
+    private void validateData(Human human) {
         validateField(human.getName(), HUMAN_NAME_LENGTH, "nameError");
         validateField(human.getSurname(), HUMAN_SURNAME_LENGTH, "surnameError");
+        /*if (!(human.getGender().toLowerCase().equals("мужской") || human.getGender().toLowerCase().equals("женский"))) {
+            errors.put("genderError", "Ошибка выбора пола!");
+        }*/
         if (!isBlankOrEmpty(human.getPatronymic()) && isLengthIncorrect(human.getPatronymic(), HUMAN_PATRONYMIC_LENGTH)) {
             errors.put("patronymicError", "Длина поля не должна превышать " + HUMAN_PATRONYMIC_LENGTH + "символов!");
+        }
+        if (isBlankOrEmpty(human.getPatronymic())) {
+            human.setPatronymic(null);
         }
         if (!isBlankOrEmpty(human.getCity()) && isLengthIncorrect(human.getCity(), CITY_LENGTH)) {
             errors.put("cityError", "Длина поля не должна превышать " + CITY_LENGTH + "символов!");
         }
-        human.setBirthDate(validateAndFormatDate(humanBirthDate, "birthDateError"));
+        if (isBlankOrEmpty(human.getCity())) {
+            human.setCity(null);
+        }
+        if (human.getBirthDate() == null) {
+            errors.put("birthDateError", "Введите дату в формате 'дд.мм.гггг'!");
+        }
     }
 
-    private void setPreviousValues() {
-        if (errors.get("nameError") == null) {
-            previousValues.put("prevName", human.getName());
-        }
-        if (errors.get("surnameError") == null) {
-            previousValues.put("prevSurname", human.getSurname());
-        }
-        if (!isBlankOrEmpty(human.getPatronymic()) && errors.get("patronymicError") == null) {
-            previousValues.put("prevPatronymic", human.getPatronymic());
-        }
-        if (!isBlankOrEmpty(human.getCity()) && errors.get("cityError") == null) {
-            previousValues.put("prevCity", human.getCity());
-        }
-        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd-MM-yyyy");
-        if (errors.get("birthDateError") == null) {
-            previousValues.put("prevBirthDate", simpleDateFormat.format(human.getBirthDate()).replace('-', '.'));
-        }
+    public Iterable<Human> findPeople() {
+        return humanRepository.findAll();
+    }
+
+    public Human findHumanById(Integer id) {
+        return humanRepository.findById(id).orElse(null);
+    }
+
+    public Iterable<Human> findPeopleByGender(String gender) {
+        return humanRepository.findAllByGender(gender);
+    }
+
+    public Iterable<Human> findPeopleByGender(Gender gender) {
+        return humanRepository.findAllByGender(gender);
+    }
+
+    public void deleteHumanById(Integer id) {
+        humanRepository.deleteById(id);
     }
 }

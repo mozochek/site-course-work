@@ -3,7 +3,6 @@ package com.mozochek.service;
 import com.mozochek.entity.SportDiscipline;
 import com.mozochek.entity.SportKind;
 import com.mozochek.repository.SportDisciplineRepository;
-import com.mozochek.repository.SportKindRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
@@ -12,70 +11,63 @@ import java.util.HashMap;
 import static com.mozochek.utils.LengthConstants.CODE_LENGTH;
 import static com.mozochek.utils.LengthConstants.SPORT_DISCIPLINE_NAME_LENGTH;
 
-
 @Service
 public class SportDisciplineService extends AbstractService {
 
-    private SportKindRepository sportKindRepository;
     private SportDisciplineRepository sportDisciplineRepository;
+    private SportKindService sportKindService;
 
-    private SportKind sportKind;
-    private SportDiscipline sportDiscipline;
-
-    public SportDisciplineService(SportKindRepository sportKindRepository,
-                                  SportDisciplineRepository sportDisciplineRepository) {
-        this.sportKindRepository = sportKindRepository;
+    public SportDisciplineService(SportDisciplineRepository sportDisciplineRepository, SportKindService sportKindService) {
         this.sportDisciplineRepository = sportDisciplineRepository;
+        this.sportKindService = sportKindService;
     }
 
-    public boolean addSportDiscipline(Integer sportKindId, String name, String code) {
-        sportKind = new SportKind();
-        sportDiscipline = new SportDiscipline();
-        sportDiscipline.setName(name);
-        sportDiscipline.setCode(code);
-
+    public boolean saveSportDiscipline(SportDiscipline sportDiscipline) {
         errors = new HashMap<>();
         previousValues = new HashMap<>();
 
-        validateData(sportKindId, name, code);
+        validateData(sportDiscipline.getName(), sportDiscipline.getCode(), sportDiscipline.getSportKind());
 
         if (errors.isEmpty()) {
-            sportDiscipline.setSportKind(sportKindRepository.findById(sportKindId).get());
             sportDisciplineRepository.save(sportDiscipline);
             return true;
         }
-        setPreviousValues();
+        previousValues.put("sportDiscipline", sportDiscipline);
         return false;
     }
 
-    private void validateData(Integer sportKindId, String name, String code) {
+    private void validateData(String name, String code, SportKind sportKind) {
         validateField(name, SPORT_DISCIPLINE_NAME_LENGTH, "nameError");
         validateField(code, CODE_LENGTH, "codeError");
         if (code.length() != CODE_LENGTH || StringUtils.containsWhitespace(code)) {
             errors.put("codeError", "Код должен состоять из " + CODE_LENGTH + " символов(без пробелов)!");
         }
-        if (sportKindRepository.findById(sportKindId).isEmpty()) {
-            errors.put("sportKindError", "Выберите вид спорта!");
-        }
-        if (isExist(sportKindId, name, code)) {
-            errors.put("objectExist", "Данная спортивная дисциплина уже находится в базе данных!");
-        }
-        if (sportKindRepository.findById(sportKindId).isEmpty()) {
-            errors.put("sportKindError", "Был выбран несуществующий вид спорта!");
+        if (sportKind == null) {
+            errors.put("sportKindError", "Ошибка выбора вида спорта!");
+        } else {
+            if (sportDisciplineIsAlreadyExist(name, code, sportKind)) {
+                errors.put("objectExist", "Данная спортивная дисциплина уже находится в базе данных!");
+            }
         }
     }
 
-    private void setPreviousValues() {
-        if (errors.get("nameError") == null) {
-            previousValues.put("prevName", sportDiscipline.getName());
-        }
-        if (errors.get("codeError") == null) {
-            previousValues.put("prevCode", sportDiscipline.getCode());
-        }
+    private boolean sportDisciplineIsAlreadyExist(String name, String code, SportKind sk) {
+        return sportDisciplineRepository.findByNameAndCodeAndSportKind(name, code, sk) != null;
     }
 
-    private boolean isExist(Integer sportKindId, String sportDisciplineName, String sportDisciplineCode) {
-        return sportDisciplineRepository
-                .findBySportKindIdAndNameAndCode(sportKindId, sportDisciplineName, sportDisciplineCode) != null;
+    public Iterable<SportDiscipline> findAllSportDisciplines() {
+        return sportDisciplineRepository.findAll();
+    }
+
+    public Iterable<SportDiscipline> findSportDisciplinesBySportKindId(Integer id) {
+        return sportDisciplineRepository.findBySportKindId(id);
+    }
+
+    public SportDiscipline findSportDisciplineById(Integer id) {
+        return sportDisciplineRepository.findById(id).orElse(null);
+    }
+
+    public void deleteSportDisciplineById(Integer id) {
+        sportDisciplineRepository.deleteById(id);
     }
 }

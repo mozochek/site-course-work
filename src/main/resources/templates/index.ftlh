@@ -1,10 +1,16 @@
-<#import "parts/html_default.ftlh" as html>
+<#import "parts/content.ftlh" as content>
 
-<@html.page "Начальная страница">
-    <div class="text-center">
-        <p><h1>Это начальная страница</h1></p>
-        <h3><a href="/tournaments">На главную</a></h3>
-        <h3><a href="/test">На тестовую страничку</a></h3>
-        <h3><a href="/error">На страницу ошибки</a></h3>
-    </div>
-</@html.page>
+<@content.zone pageTitleText="Начальная страница" pageHeaderText="Начальная страница">
+  <#include "parts/security.ftlh">
+  <#if !user??>
+    <h3>
+      Приветствуем Вас!<br>
+      Чтобы получить доступ к сайту необходимо пройти <a href="/registration">регистрацию</a>
+      или <a href="/login">авторизацию</a>
+    </h3>
+  <#else>
+    <h3>
+      Приветствуем Вас, ${user.username}!
+    </h3>
+  </#if>
+</@content.zone>

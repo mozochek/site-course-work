@@ -1,33 +1,22 @@
-<#import "parts/html_default.ftlh" as html>
+<#import "parts/content.ftlh" as content>
+<#import "parts/buttons.ftlh" as button>
+<#import "parts/page_elems.ftlh" as elem>
 
-<@html.page "Авторизация">
-<div class="d-flex justify-content-center">
-    <div class="col-6">
-        <form action="/login" method="post">
-            <div class="form-group">
-                <div class="text-center my-4">
-                    <h1>Авторизация</h1>
-                </div>
-            </div>
-            <div class="form-group">
-                <label for="username" class="col-form-label">Имя пользователя</label>
-                <input type="text" maxlength="${username!"30"}" class="form-control" id="username" name="username" required>
-            </div>
-            <div class="form-group">
-                <label for="password" class="col-form-label">Пароль</label>
-                <input type="password" maxlength="${passwordLength!"30"}" class="form-control" id="password" name="password" required>
-            </div>
-            <div class="form-group form-inline float-right mt-4">
-                <a class="mr-md-4" href="/registration">Регистрация</a>
-                <button type="submit" class="btn btn-lg btn-outline-success">Войти</button>
-                <#if loginError??>
-                    <input class="form-control is-invalid" type="hidden" id="loginFeedback" name="loginFeedback">
-                    <div class="invalid-feedback" for="loginFeedback">
-                        ${loginError}
-                    </div>
-                </#if>
-            </div>
-        </form>
-    </div>
-</div>
-</@html.page>
+<@content.zone pageTitleText="Авторизация" pageHeaderText="Авторизация">
+  <form class="py-4" method="post">
+    <!-- Поле ввода логина -->
+    <@elem.rowAlignment 6>
+      <input type="text" maxlength="${(fieldLength.USERNAME_LENGTH)!"30"}" class="form-control" id="username" name="username" placeholder="Имя пользователя" required>
+    </@elem.rowAlignment>
+    <!-- Поле ввода пароля -->
+    <@elem.rowAlignment 6>
+      <input type="password" maxlength="${(fieldLength.PASSWORD_LENGTH)!"30"}" class="form-control" id="password" name="password" placeholder="Пароль" required>
+    </@elem.rowAlignment>
+    <@button.submit "Войти">
+      <div class="form-group text-center">
+        <span>Еще нет аккаунта?</span><br>
+        <a href="/registration">Регистрация</a>
+      </div>
+    </@button.submit>
+  </form>
+</@content.zone>

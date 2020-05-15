@@ -3,16 +3,15 @@ package com.mozochek.service;
 import org.springframework.util.StringUtils;
 
 import java.sql.Date;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.HashMap;
 
+import static com.mozochek.utils.DateUtil.parseDate;
 import static com.mozochek.utils.LengthConstants.DATE_LENGTH;
 
 public abstract class AbstractService {
 
-    HashMap<String, String> errors;
-    HashMap<String, String> previousValues;
+    protected HashMap<String, String> errors;
+    protected HashMap<String, Object> previousValues;
 
     public AbstractService() {
 
@@ -27,43 +26,18 @@ public abstract class AbstractService {
         }
     }
 
-    public void validateDate(String date, String errorName) {//
+    public void validateDate(String date, String errorName) {
         if (date.length() != DATE_LENGTH || date.isBlank()) {
             errors.put(errorName, "Введите дату в формате 'дд.мм.гггг'!");
         }
     }
 
-    public Date formatDate(String date, String errorName) {//
-        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd-MM-yyyy");
-        date = date.replace('.', '-');
-        Date formattedDate = null;
-        try {
-            formattedDate = new Date(simpleDateFormat.parse(date).getTime());
-        } catch (ParseException e) {
-            errors.put(errorName, "Введите дату в формате 'дд.мм.гггг'!");
-        }
-        return formattedDate;
-    }
-
-    public Date validateAndFormatDate(String date, String errorName) {//
+    public Date validateAndParseDate(String date, String errorName) {
         validateDate(date, errorName);
         if (errors.get(errorName) == null) {
-            return formatDate(date, errorName);
+            return parseDate(date);
         }
         return null;
-        /*if (date.length() != DATE_LENGTH || date.isBlank()) {
-            errors.put(errorName, "Введите дату в формате 'дд.мм.гггг'!");
-            return null;
-        }
-        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd-MM-yyyy");
-        date = date.replace('.', '-');
-        Date formattedDate = null;
-        try {
-            formattedDate = new Date(simpleDateFormat.parse(date).getTime());
-        } catch (ParseException e) {
-            errors.put(errorName, "Введите дату в формате 'дд.мм.гггг'!");
-        }
-        return formattedDate;*/
     }
 
     public boolean isBlankOrEmpty(String str) {
@@ -78,7 +52,7 @@ public abstract class AbstractService {
         return errors;
     }
 
-    public HashMap<String, String> getPreviousValues() {
+    public HashMap<String, Object> getPreviousValues() {
         return previousValues;
     }
 }

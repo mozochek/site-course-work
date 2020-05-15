@@ -1,8 +1,6 @@
-<#import "parts/html_default.ftlh" as html>
+<#import "parts/content.ftlh" as content>
 
-<@html.page "Ошибка">
-    <div class="text-center">
-        <h1>Ошибка. <br>Такой страницы не существует</br></h1>
-        <h3><a href="/">На начальную</a></h3>
-    </div>
-</@html.page>
+<@content.zone pageTitleText="Ошибка" pageHeaderText="Ошибка">
+  <h3>Такой страницы не существует</h3>
+  <h3><a href="/">На начальную</a></h3>
+</@content.zone>

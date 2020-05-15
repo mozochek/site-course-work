@@ -15,49 +15,47 @@ public class SportKindService extends AbstractService {
 
     private SportKindRepository sportKindRepository;
 
-    private SportKind sportKind;
-
     public SportKindService(SportKindRepository sportKindRepository) {
         this.sportKindRepository = sportKindRepository;
     }
 
-    public boolean addSportKind(SportKind sportKind) {
-        this.sportKind = sportKind;
-
+    public boolean saveSportKind(SportKind sportKind) {
         errors = new HashMap<>();
         previousValues = new HashMap<>();
 
-        validateData(this.sportKind.getName(), this.sportKind.getCode());
+        validateData(sportKind.getName(), sportKind.getCode());
 
         if (errors.isEmpty()) {
-            sportKindRepository.save(this.sportKind);
+            sportKindRepository.save(sportKind);
             return true;
         }
-        setPreviousValues();
+        previousValues.put("sportKind", sportKind);
         return false;
     }
 
     private void validateData(String name, String code) {
         validateField(name, SPORT_KIND_NAME_LENGTH, "nameError");
-        validateField(code, CODE_LENGTH, "codeError");
         if (code.length() != CODE_LENGTH || StringUtils.containsWhitespace(code)) {
             errors.put("codeError", "Код должен состоять из " + CODE_LENGTH + " символов(без пробелов)!");
         }
-        if (isExist(name, code)) {
+        if (sportKindIsAlreadyExist(name, code)) {
             errors.put("objectExist", "Данный вид спорта уже находится в базе данных!");
         }
     }
 
-    private void setPreviousValues() {
-        if (errors.get("nameError") == null) {
-            previousValues.put("prevName", sportKind.getName());
-        }
-        if (errors.get("codeError") == null) {
-            previousValues.put("prevCode", sportKind.getCode());
-        }
+    private boolean sportKindIsAlreadyExist(String name, String code) {
+        return sportKindRepository.findByNameAndCode(name, code) != null;
     }
 
-    private boolean isExist(String name, String code) {
-        return sportKindRepository.findByNameAndCode(name, code) != null;
+    public SportKind findSportKindById(Integer id) {
+        return sportKindRepository.findById(id).orElse(null);
+    }
+
+    public Iterable<SportKind> findAllSportKinds() {
+        return sportKindRepository.findAll();
+    }
+
+    public void deleteSportKindById(Integer id) {
+        sportKindRepository.deleteById(id);
     }
 }

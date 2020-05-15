@@ -1,8 +1,9 @@
 package com.mozochek.controller;
 
 import com.mozochek.entity.User;
-import com.mozochek.repository.UserRepository;
 import com.mozochek.service.UserService;
+import com.mozochek.utils.FieldsLengthConstantsImplementing;
+import com.mozochek.utils.Role;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -10,46 +11,42 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import static com.mozochek.utils.LengthConstants.*;
-
 @Controller
-public class UserController {
+public class UserController implements FieldsLengthConstantsImplementing {
 
-    private UserRepository userRepository;
     private UserService userService;
     private BCryptPasswordEncoder bCryptPasswordEncoder;
 
-    public UserController(UserRepository userRepository, UserService userService, BCryptPasswordEncoder bCryptPasswordEncoder) {
-        this.userRepository = userRepository;
+    public UserController(UserService userService, BCryptPasswordEncoder bCryptPasswordEncoder) {
         this.userService = userService;
         this.bCryptPasswordEncoder = bCryptPasswordEncoder;
     }
 
     @GetMapping("/login")
     public String login(Model model) {
-        addFieldsLengthConstants(model);
+        addFieldsLengthConstantsIn(model);
         return "login";
     }
 
     // Этот метод перекрывается обработчиком спринга, но все равно пусть будет на всякий случай
-    @PostMapping("/login")
+    /*@PostMapping("/login")
     public String performLogin(@RequestParam String username,
                                @RequestParam String password,
                                Model model) {
-        User user = userRepository.findByUsername(username);
-        boolean userIsNotExistOrPasswordIncorrect = user == null || !password.equals(user.getPassword());
+        User user = userService.findUserByUsername(username);
+        boolean userIsNotExistOrPasswordIncorrect = (user == null) || !password.equals(user.getPassword());
         if (userIsNotExistOrPasswordIncorrect) {
-            model.addAttribute("loginError", "Данные были введены неверно!");
+            model.addAttribute("loginError", "Пользователь не найден!");
             return "login";
         }
-        model.addAttribute("user", user);
-        addFieldsLengthConstants(model);
+        userService.loadUserByUsername(username);
+        addFieldsLengthConstantsIn(model);
         return "login";
-    }
+    }*/
 
     @GetMapping("/registration")
     public String registration(Model model) {
-        addFieldsLengthConstants(model);
+        addFieldsLengthConstantsIn(model);
         return "registration";
     }
 
@@ -57,29 +54,46 @@ public class UserController {
     public String performRegistration(@RequestParam String username,
                                       @RequestParam String password,
                                       Model model) {
-        boolean isSavedSuccessfully = userService.addUser(new User(username, bCryptPasswordEncoder.encode(password)));
+        boolean isSavedSuccessfully = userService.saveUser(new User(username.trim(), bCryptPasswordEncoder.encode(password.trim())), password, "USER");
         if (isSavedSuccessfully) {
             model.addAttribute("saveSuccessful", "Пользователь успешно зарегестрирован!");
         } else {
             model.addAllAttributes(userService.getErrors());
         }
-        addFieldsLengthConstants(model);
+        addFieldsLengthConstantsIn(model);
         return "registration";
     }
 
     @GetMapping("/profile")
-    public String getProfile() {
+    public String profileGet() {
         return "profile";
     }
 
     @GetMapping("/admin/users/all")
-    public String getUsersList(Model model) {
-        model.addAttribute("users", userRepository.findAll());
+    public String usersListGet(Model model) {
+        model.addAttribute("users", userService.findAllUsers());
         return "user_list";
     }
 
-    private void addFieldsLengthConstants(Model model) {
-        model.addAttribute("usernameLength", USERNAME_LENGTH);
-        model.addAttribute("passwordLength", PASSWORD_LENGTH);
+    @GetMapping("/dev/create_user")
+    public String createUserGet(Model model) {
+        addFieldsLengthConstantsIn(model);
+        return "registration";
+    }
+
+    @PostMapping("/dev/create_user")
+    public String createUserPost(@RequestParam String username,
+                                 @RequestParam String password,
+                                 @RequestParam String role,
+                                 Model model) {
+        User user = new User(username.trim(), bCryptPasswordEncoder.encode(password.trim()));
+        boolean isSavedSuccessfully = userService.saveUser(user, password, role);
+        if (isSavedSuccessfully) {
+            return "redirect:/admin/users/all";
+        }
+        model.addAllAttributes(userService.getErrors());
+        model.addAllAttributes(userService.getPreviousValues());
+        addFieldsLengthConstantsIn(model);
+        return "registration";
     }
 }
